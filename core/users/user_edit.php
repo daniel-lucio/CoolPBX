@@ -145,7 +145,7 @@
 			if (permission_exists('message_key')) {
 				$message_key = $_POST["message_key"];
 			}
-			if (is_array($_SESSION['authentication']['methods']) && (in_array('totp', $_SESSION['authentication']['methods']))) {
+			if (in_array('totp', $_SESSION['authentication']['methods'])) {
 				$user_totp_secret = strtoupper($_POST["user_totp_secret"]);
 			}
 
@@ -511,7 +511,7 @@
 				if (permission_exists('api_key')) {
 					$array['users'][$x]['api_key'] = ($api_key != '') ? $api_key : null;
 				}
-				if (is_array($_SESSION['authentication']['methods']) && (in_array('totp', $_SESSION['authentication']['methods']))) {
+				if (in_array('totp', $_SESSION['authentication']['methods'])) {
 					$array['users'][$x]['user_totp_secret'] = $user_totp_secret;
 				}
 				$array['users'][$x]['user_enabled'] = $user_enabled;
@@ -593,7 +593,7 @@
 		//populate the form with values from db
 			if ($action == 'edit') {
 				$sql = "select domain_uuid, user_uuid, username, user_email, api_key, user_totp_secret, ";
-				$sql .= "user_enabled, contact_uuid, ".($db_type=='pgsql'?"cast(user_enabled as text)":"user_enabled").", user_status ";
+				$sql .= "user_enabled, contact_uuid, cast(user_enabled as text), user_status ";
 				$sql .= "from v_users ";
 				$sql .= "where user_uuid = :user_uuid ";
 				if (!permission_exists('user_all')) {
@@ -1078,7 +1078,7 @@
 	}
 
 	//user time based one time password secret
-	if (is_array($_SESSION['authentication']['methods']) && (in_array('totp', $_SESSION['authentication']['methods']))) {
+	if (in_array('totp', $_SESSION['authentication']['methods'])) {
 		if ($user_totp_secret != '' && $username != '') {
 			$otpauth = "otpauth://totp/".$username."?secret=".$user_totp_secret."&issuer=".$_SESSION['domain_name'];
 
