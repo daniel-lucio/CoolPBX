@@ -2557,7 +2557,7 @@
 																			$k != 'insert_date' &&
 																			$k != 'update_user' &&
 																			$k != 'update_date') {
-																			if (strlen($v) == 0) {
+																			if (!isset($v) || strlen($v) == 0) {
 																				$sql .= "null, ";
 																			}
 																			elseif ($v === "now()") {
