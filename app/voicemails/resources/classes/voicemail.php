@@ -213,8 +213,14 @@
 
 			//get the message from the database
 				$sql = "select *, ";
-				$sql .= "to_char(timezone(:time_zone, to_timestamp(m.created_epoch)), 'DD Mon YYYY') as created_date_formatted, \n";
-				$sql .= "to_char(timezone(:time_zone, to_timestamp(m.created_epoch)), 'HH12:MI:SS am') as created_time_formatted \n";
+				if ($db_type == 'pgsql'){
+					$sql .= "to_char(timezone(:time_zone, to_timestamp(m.created_epoch)), 'DD Mon YYYY') as created_date_formatted, \n";
+					$sql .= "to_char(timezone(:time_zone, to_timestamp(m.created_epoch)), 'HH12:MI:SS am') as created_time_formatted \n";
+				}
+				else{
+					$sql .= "DATE_FORMAT(convert_tz(m.created_epoch, 'UTC', :time_zone), '%d %b %Y') as created_date_formatted, \n";
+					$sql .= "DATE_FORMAT(convert_tz(m.created_epoch, 'UTC', :time_zone), '%r') as created_date_formatted \n";
+				}
 				$sql .= "from v_voicemail_messages as m, v_voicemails as v ";
 				$sql .= "where m.domain_uuid = :domain_uuid ";
 				$sql .= "and m.voicemail_uuid = v.voicemail_uuid ";
