@@ -56,6 +56,10 @@ if (!class_exists('registrations')) {
 		 */
 		public function get($profile = 'all') {
 
+			//add multi-lingual support
+				$language = new text;
+				$text = $language->get();
+
 			//initialize the id used in the registrations array
 				$id = 0;
 
@@ -243,6 +247,7 @@ if (!class_exists('registrations')) {
 					if (is_array($records) && @sizeof($records) != 0) {
 						foreach($records as $record) {
 							if (
+								!empty($record['checked']) &&
 								$record['checked'] == 'true' &&
 								$record['user'] != '' &&
 								$record['profile'] != ''
