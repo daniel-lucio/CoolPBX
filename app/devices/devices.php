@@ -188,6 +188,7 @@
 	if ($db_type == 'pgsql'){
 		$sql .= "to_char(timezone(:time_zone, d.device_provisioned_date), 'DD Mon YYYY') as provisioned_date_formatted, \n";
 		$sql .= "to_char(timezone(:time_zone, d.device_provisioned_date), 'HH12:MI:SS am') as provisioned_time_formatted \n";
+	}
 	else{
 		$sql .= "DATE_FORMAT(convert_tz(d.device_provisioned_date, 'UTC', :time_zone), '%d %b %Y') as provisioned_date_formatted, \n";
 		$sql .= "DATE_FORMAT(convert_tz(d.device_provisioned_date, 'UTC', :time_zone), '%r') as provisioned_time_formatted \n";
