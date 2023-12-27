@@ -45,9 +45,9 @@
 	$sql_search = '';
 
 //set additional variables
-	$a = $_GET["a"] ?? '';
-	$search = $_GET["search"] ?? '';
-	$show = $_GET['show'] ?? '';
+	$a = $_REQUEST["a"] ?? '';
+	$search = $_REQUEST["search"] ?? '';
+	$show = $_REQUEST['show'] ?? '';
 
 //download the recording
 	if ($a == "download" && (permission_exists('recording_play') || permission_exists('recording_download'))) {
