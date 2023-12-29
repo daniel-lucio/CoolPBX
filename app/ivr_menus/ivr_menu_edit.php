@@ -330,7 +330,7 @@
 							}
 							$array['ivr_menus'][0]['ivr_menu_options'][$y]["ivr_menu_option_order"] = $row["ivr_menu_option_order"];
 							$array['ivr_menus'][0]['ivr_menu_options'][$y]["ivr_menu_option_description"] = $row["ivr_menu_option_description"];
-							$array['ivr_menus'][0]["ivr_menu_options"][$y]["ivr_menu_option_enabled"] = !empty($row['ivr_menu_option_enabled']) ?: 'false';
+							$array['ivr_menus'][0]["ivr_menu_options"][$y]["ivr_menu_option_enabled"] = !empty($row['ivr_menu_option_enabled'])? $row['ivr_menu_option_enabled']: 'false';
 							$y++;
 						}
 					}
