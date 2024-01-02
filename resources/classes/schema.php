@@ -385,7 +385,7 @@ if (!class_exists('schema')) {
 									else {
 										$sql .= $field['type'];
 									}
-									if ($field['key']['type'] == "primary") {
+									if (!empty($field['key']['type']) && ($field['key']['type'] == "primary")) {
 										$sql .= " PRIMARY KEY";
 									}
 									$field_count++;
