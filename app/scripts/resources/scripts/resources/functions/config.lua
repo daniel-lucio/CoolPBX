@@ -212,6 +212,15 @@
                 debug.sql = false;
                 debug.xml_request = false;
                 debug.xml_string = false;
+
+                --include local.lua
+                if (file_exists("/etc/fusionpbx/local.lua")) then
+                        dofile("/etc/fusionpbx/local.lua");
+                elseif (file_exists("/usr/local/etc/fusionpbx/local.lua")) then
+                        dofile("/usr/local/etc/fusionpbx/local.lua");
+                elseif (file_exists(scripts_dir.."/resources/local.lua")) then
+                        require("resources.local");
+                end
         end
 
 --autoload the configuration
