@@ -120,8 +120,13 @@
 					end
 
 				--get voicemail message details
-					local sql = [[SELECT to_char(timezone(:time_zone, to_timestamp(created_epoch)), 'Day DD Mon YYYY HH:MI:SS PM') as message_date, * 
-						FROM v_voicemail_messages
+					local sql;
+					if (database["type"] == "mysql") then
+						sql = [[SELECT *, FROM_UNIXTIME(created_epoch, '%a %d %b %Y %r') as message_date ]];
+					else
+						sql = [[SELECT to_char(timezone(:time_zone, to_timestamp(created_epoch)), 'Day DD Mon YYYY HH:MI:SS PM') as message_date, * ]];
+					end
+					sql = sql .. [[ FROM v_voicemail_messages
 						WHERE domain_uuid = :domain_uuid
 						AND voicemail_message_uuid = :uuid]]
 					local params = {domain_uuid = domain_uuid, uuid = uuid, time_zone = time_zone};
