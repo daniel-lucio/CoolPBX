@@ -156,7 +156,10 @@
 
 		--settings
 			require "resources.functions.settings";
-			settings = settings(domain_uuid);
+			if (type(settings) ~= 'table') then
+				freeswitch.consoleLog("notice", "[sms] getting default settings for ".. domain_uuid);
+				settings = settings(domain_uuid);
+			end
 			if (settings['voicemail'] ~= nil) then
 				storage_type = '';
 				if (settings['voicemail']['storage_type'] ~= nil) then
