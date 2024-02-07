@@ -133,18 +133,32 @@
 	if (isset($_SESSION['email_queue']['debug']['boolean'])) {
 		$debug = $_SESSION['email_queue']['debug']['boolean'];
 	}
+	if (isset($_SESSION['email_queue']['cluster_mode']['boolean'])) {
+		$email_queue_cluster_mode = $_SESSION['email_queue']['cluster_mode']['boolean'];
+	}
+	else {
+		$email_queue_cluster_mode = 'false';
+	}
+	if (isset($_SESSION['email_queue']['crontab_mode']['boolean'])) {
+		$email_queue_crontab_mode = $_SESSION['email_queue']['crontab_mode']['boolean'];
+	}
+	else {
+		$email_queue_crontab_mode = 'false';
+	}
 
 //get the messages waiting in the email queue
-	while (true) {
+	$i = true
+	while ($i === true) {
 
 		//get the messages that are waiting to send
 		$sql = "select * from v_email_queue ";
 		$sql .= "where (email_status = 'waiting' or email_status = 'trying') ";
-		$sql .= "and hostname = :hostname ";
+		if ($email_queue_cluster_mode == 'false'){
+			$sql .= "and hostname = :hostname ";
+			$parameters['hostname'] = $hostname;
+		}
 		$sql .= "order by domain_uuid asc ";
-		$sql .= "limit :limit ";
-		$parameters['hostname'] = $hostname;
-		$parameters['limit'] = $email_queue_limit;
+		$sql .= "limit ".$email_queue_limit;
 		$database = new database;
 		$email_queue = $database->select($sql, $parameters, 'all');
 		unset($parameters);
@@ -171,8 +185,13 @@
 			}
 		}
 
-		//pause to prevent excessive database queries
-		sleep($interval);
+		if ($email_queue_crontab_mode == 'true'){
+		       $i = false;
+		}
+		else{
+		       //pause to prevent excessive database queries
+		       sleep($interval);
+		}
 	}
 
 //remove the old pid file
