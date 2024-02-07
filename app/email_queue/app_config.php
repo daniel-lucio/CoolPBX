@@ -166,7 +166,9 @@
 		$z++;
 		$apps[$x]['db'][$y]['fields'][$z]['name']['text'] = 'email_response';
 		$apps[$x]['db'][$y]['fields'][$z]['name']['deprecated'] = 'email_debug';
-		$apps[$x]['db'][$y]['fields'][$z]['type'] = 'text';
+		$apps[$x]['db'][$y]['fields'][$z]['type']['pgsql'] = 'text';
+		$apps[$x]['db'][$y]['fields'][$z]['type']['sqlite'] = 'text';
+		$apps[$x]['db'][$y]['fields'][$z]['type']['mysql'] = 'mediumtext';
 		//$apps[$x]['db'][$y]['fields'][$z]['search_by'] = 'true';
 		$z++;
 		$apps[$x]['db'][$y]['fields'][$z]['name'] = "insert_date";
