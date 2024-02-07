@@ -147,7 +147,7 @@
 	}
 
 //get the messages waiting in the email queue
-	$i = true
+	$i = true;
 	while ($i === true) {
 
 		//get the messages that are waiting to send
