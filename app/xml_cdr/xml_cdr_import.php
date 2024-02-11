@@ -42,7 +42,7 @@
 			}
 		}
 		if (!$found) {
-			echo "access denied";
+			echo "access denied: blocked by CIDR.";
 			exit;
 		}
 	}
