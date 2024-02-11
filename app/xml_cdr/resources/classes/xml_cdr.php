@@ -1051,7 +1051,7 @@ if (!class_exists('xml_cdr')) {
 				//if http enabled is set to false then deny access
 					if (!defined('STDIN')) {
 						if ($_SESSION["cdr"]["http_enabled"]["boolean"] == "false") {
-							echo "access denied<br />\n";
+							echo "access denied: http_enabled is false.<br />\n";
 							return;
 						}
 					}
@@ -1065,7 +1065,7 @@ if (!class_exists('xml_cdr')) {
 								$_SESSION["xml_cdr"]["password"] = $auth_array[1];
 							}
 							else {
-								echo "access denied<br />\n";
+								echo "access denied: wrong authentication.<br />\n";
 								return;
 							}
 						}
