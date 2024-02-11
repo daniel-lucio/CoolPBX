@@ -245,6 +245,7 @@ if (!class_exists('xml_cdr')) {
 						}
 					}
 					else {
+						print_r($response);
 						//move the file to a failed directory
 						if (!empty($xml_cdr_dir)) {
 							if (!file_exists($xml_cdr_dir.'/failed')) {
