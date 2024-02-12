@@ -492,13 +492,29 @@ if (!class_exists('xml_cdr')) {
 					//time
 						$start_epoch = urldecode($xml->variables->start_epoch);
 						$this->array[$key]['start_epoch'] = $start_epoch;
-						$this->array[$key]['start_stamp'] = is_numeric($start_epoch) ? date('c', $start_epoch) : null;
+						if ($db_type == 'pgsql'){
+							$this->array[$key]['start_stamp'] = is_numeric($start_epoch) ? date('c', $start_epoch) : null;
+						}
+						else{
+							$this->array[$key]['start_stamp'] = check_str(urldecode($xml->variables->start_stamp));
+							
+						}
 						$answer_epoch = urldecode($xml->variables->answer_epoch);
 						$this->array[$key]['answer_epoch'] = $answer_epoch;
-						$this->array[$key]['answer_stamp'] = is_numeric($answer_epoch) ? date('c', $answer_epoch) : null;
+						if ($db_type == 'pgsql'){
+							$this->array[$key]['answer_stamp'] = is_numeric($answer_epoch) ? date('c', $answer_epoch) : null;
+						}
+						else{
+							$this->array[$key]['answer_stamp'] = check_str(urldecode($xml->variables->answer_stamp));
+						}
 						$end_epoch = urldecode($xml->variables->end_epoch);
 						$this->array[$key]['end_epoch'] = $end_epoch;
-						$this->array[$key]['end_stamp'] = is_numeric($end_epoch) ? date('c', $end_epoch) : null;
+						if ($db_type == 'pgsql'){
+							$this->array[$key]['end_stamp'] = is_numeric($end_epoch) ? date('c', $end_epoch) : null;
+						}
+						else{
+							$this->array[$key]['end_stamp'] = check_str(urldecode($xml->variables->end_stamp));
+						}
 						$this->array[$key]['duration'] = urldecode($xml->variables->duration);
 						$this->array[$key]['mduration'] = urldecode($xml->variables->mduration);
 						$this->array[$key]['billsec'] = urldecode($xml->variables->billsec);
@@ -1116,30 +1132,99 @@ if (!class_exists('xml_cdr')) {
 				if ((!empty($this->start_stamp_begin) && strlen($this->start_stamp_begin) > 0) || !empty($this->start_stamp_end)) {
 					unset($this->quick_select);
 					if (strlen($this->start_stamp_begin) > 0 && !empty($this->start_stamp_end)) {
-						$sql_date_range = " and start_stamp between :start_stamp_begin::timestamptz and :start_stamp_end::timestamptz \n";
-						$parameters['start_stamp_begin'] = $this->start_stamp_begin.':00.000 '.$time_zone;
-						$parameters['start_stamp_end'] = $this->start_stamp_end.':59.999 '.$time_zone;
+						if ($db_type == 'pgsql'){
+							$sql_date_range = " and start_stamp between :start_stamp_begin::timestamptz and :start_stamp_end::timestamptz \n";
+							$parameters['start_stamp_begin'] = $this->start_stamp_begin.':00.000 '.$time_zone;
+							$parameters['start_stamp_end'] = $this->start_stamp_end.':59.999 '.$time_zone;
+						}
+						else{
+							$sql_date_range = " and start_stamp between :start_stamp_begin and :start_stamp_end \n";
+							$parameters['start_stamp_begin'] = $this->start_stamp_begin.':00.000 ';
+							$parameters['start_stamp_end'] = $this->start_stamp_end.':59.999 ';
+
+						}
 					}
 					else {
 						if (!empty($this->start_stamp_begin)) {
-							$sql_date_range = "and start_stamp >= :start_stamp_begin::timestamptz \n";
-							$parameters['start_stamp_begin'] = $this->start_stamp_begin.':00.000 '.$time_zone;
+							if ($db_type == 'pgsql'){
+								$sql_date_range = "and start_stamp >= :start_stamp_begin::timestamptz \n";
+								$parameters['start_stamp_begin'] = $this->start_stamp_begin.':00.000 '.$time_zone;
+							}
+							else{
+								$sql_date_range = "and start_stamp >= :start_stamp_begin \n";
+								$parameters['start_stamp_begin'] = $this->start_stamp_begin.':00.000 ';
+							}
 						}
 						if (!empty($this->start_stamp_end)) {
-							$sql_date_range .= "and start_stamp <= :start_stamp_end::timestamptz \n";
-							$parameters['start_stamp_end'] = $this->start_stamp_end.':59.999 '.$time_zone;
+							if ($db_type == 'pgsql'){
+								$sql_date_range .= "and start_stamp <= :start_stamp_end::timestamptz \n";
+								$parameters['start_stamp_end'] = $this->start_stamp_end.':59.999 '.$time_zone;
+							}
+							else{
+								$sql_date_range .= "and start_stamp <= :start_stamp_end \n";
+								$parameters['start_stamp_end'] = $this->start_stamp_end.':59.999 ';
+							}
 						}
 					}
 				}
 				else {
 					switch ($this->quick_select) {
-						case 1: $sql_date_range = "and start_stamp >= '".date('Y-m-d H:i:s.000', strtotime("-1 week"))." ".$time_zone."'::timestamptz \n"; break; //last 7 days
-						case 2: $sql_date_range = "and start_stamp >= '".date('Y-m-d H:i:s.000', strtotime("-1 hour"))." ".$time_zone."'::timestamptz \n"; break; //last hour
-						case 3: $sql_date_range = "and start_stamp >= '".date('Y-m-d')." "."00:00:00.000 ".$time_zone."'::timestamptz \n"; break; //today
-						case 4: $sql_date_range = "and start_stamp between '".date('Y-m-d',strtotime("-1 day"))." "."00:00:00.000 ".$time_zone."'::timestamptz and '".date('Y-m-d',strtotime("-1 day"))." "."23:59:59.999 ".$time_zone."'::timestamptz \n"; break; //yesterday
-						case 5: $sql_date_range = "and start_stamp >= '".date('Y-m-d',strtotime("this week"))." "."00:00:00.000 ".$time_zone."' \n"; break; //this week
-						case 6: $sql_date_range = "and start_stamp >= '".date('Y-m-')."01 "."00:00:00.000 ".$time_zone."'::timestamptz \n"; break; //this month
-						case 7: $sql_date_range = "and start_stamp >= '".date('Y-')."01-01 "."00:00:00.000 ".$time_zone."'::timestamptz \n"; break; //this year
+						case 1: 
+							if ($db_type == 'pgsql'){
+								$sql_date_range = "and start_stamp >= '".date('Y-m-d H:i:s.000', strtotime("-1 week"))." ".$time_zone."'::timestamptz \n";
+							}
+							else{
+								$sql_date_range = "and start_stamp >= '".date('Y-m-d H:i:s.000', strtotime("-1 week"))."' \n";
+							}
+							break; //last 7 days
+						case 2: 
+							if ($db_type == 'pgsql'){
+								$sql_date_range = "and start_stamp >= '".date('Y-m-d H:i:s.000', strtotime("-1 hour"))." ".$time_zone."'::timestamptz \n";
+							}
+							else{
+								$sql_date_range = "and start_stamp >= '".date('Y-m-d H:i:s.000', strtotime("-1 hour"))."' \n";
+							}
+							break; //last hour
+						case 3: 
+							if ($db_type == 'pgsql'){
+								$sql_date_range = "and start_stamp >= '".date('Y-m-d')." "."00:00:00.000 ".$time_zone."'::timestamptz \n";
+							}
+							else{
+								$sql_date_range = "and start_stamp >= '".date('Y-m-d')." "."00:00:00.000' \n";
+							}
+							break; //today
+						case 4: 
+							if ($db_type == 'pgsql'){
+								$sql_date_range = "and start_stamp between '".date('Y-m-d',strtotime("-1 day"))." "."00:00:00.000 ".$time_zone."'::timestamptz and '".date('Y-m-d',strtotime("-1 day"))." "."23:59:59.999 ".$time_zone."'::timestamptz \n";
+							}
+							else{
+								$sql_date_range = "and start_stamp between '".date('Y-m-d',strtotime("-1 day"))." "."00:00:00.000' and '".date('Y-m-d',strtotime("-1 day"))." "."23:59:59.999' \n";
+							}
+							break; //yesterday
+						case 5: 
+							if ($db_type == 'pgsql'){
+								$sql_date_range = "and start_stamp >= '".date('Y-m-d',strtotime("this week"))." "."00:00:00.000 ".$time_zone."' \n";
+							}
+							else{
+								$sql_date_range = "and start_stamp >= '".date('Y-m-d',strtotime("this week"))." "."00:00:00.000' \n";
+							}
+							break; //this week
+						case 6: 
+							if ($db_type == 'pgsql'){
+								$sql_date_range = "and start_stamp >= '".date('Y-m-')."01 "."00:00:00.000 ".$time_zone."'::timestamptz \n";
+							}
+							else{
+								$sql_date_range = "and start_stamp >= '".date('Y-m-')."01 "."00:00:00.000' \n";
+							}
+							break; //this month
+						case 7: 
+							if ($db_type == 'pgsql'){
+								$sql_date_range = "and start_stamp >= '".date('Y-')."01-01 "."00:00:00.000 ".$time_zone."'::timestamptz \n";
+							}
+							else{
+								$sql_date_range = "and start_stamp >= '".date('Y-')."01-01 "."00:00:00.000' \n";
+							}
+							break; //this year
 					}
 				}
 
