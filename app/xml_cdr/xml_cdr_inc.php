@@ -255,8 +255,8 @@
 		$parameters['time_zone'] = $time_zone;
 	}
 	else{
-		$sql .= "DATE_FORMAT(start_stamp, '%a %d %b %Y %r') as start_date_formatted, \n";
-		$sql .= "DATE_FORMAT(start_stamp, '%a %d %b %Y %r') as start_time_formatted, \n";
+		$sql .= "DATE_FORMAT(start_stamp, '%a %d %b %Y') as start_date_formatted, \n";
+		$sql .= "DATE_FORMAT(start_stamp, '%r') as start_time_formatted, \n";
 	}
 	$sql .= "c.start_epoch, \n";
 	$sql .= "c.hangup_cause, \n";
