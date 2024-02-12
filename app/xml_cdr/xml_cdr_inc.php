@@ -405,9 +405,16 @@
 	}
 
 	if (!empty($start_stamp_begin) && !empty($start_stamp_end)) {
-		$sql .= "and start_stamp between :start_stamp_begin::timestamptz and :start_stamp_end::timestamptz \n";
-		$parameters['start_stamp_begin'] = $start_stamp_begin.':00.000 '.$time_zone;
-		$parameters['start_stamp_end'] = $start_stamp_end.':59.999 '.$time_zone;
+		if ($db_type == 'pgsql'){
+			$sql .= "and start_stamp between :start_stamp_begin::timestamptz and :start_stamp_end::timestamptz \n";
+			$parameters['start_stamp_begin'] = $start_stamp_begin.':00.000 '.$time_zone;
+			$parameters['start_stamp_end'] = $start_stamp_end.':59.999 '.$time_zone;
+		}
+		else{
+			$sql .= "and start_stamp between :start_stamp_begin and :start_stamp_end \n";
+			$parameters['start_stamp_begin'] = $start_stamp_begin.':00.000 ';
+			$parameters['start_stamp_end'] = $start_stamp_end.':59.999 ';
+		}
 	}
 	else {
 		if (!empty($start_stamp_begin)) {
@@ -420,9 +427,17 @@
 		}
 	}
 	if (!empty($answer_stamp_begin) && !empty($answer_stamp_end)) {
-		$sql .= "and answer_stamp between :answer_stamp_begin::timestamptz and :answer_stamp_end::timestamptz \n";
-		$parameters['answer_stamp_begin'] = $answer_stamp_begin.':00.000 '.$time_zone;
-		$parameters['answer_stamp_end'] = $answer_stamp_end.':59.999 '.$time_zone;
+		if ($db_type == 'pgsql'){
+			$sql .= "and answer_stamp between :answer_stamp_begin::timestamptz and :answer_stamp_end::timestamptz \n";
+			$parameters['answer_stamp_begin'] = $answer_stamp_begin.':00.000 '.$time_zone;
+			$parameters['answer_stamp_end'] = $answer_stamp_end.':59.999 '.$time_zone;
+		}
+		else{
+			$sql .= "and answer_stamp between :answer_stamp_begin and :answer_stamp_end \n";
+			$parameters['answer_stamp_begin'] = $answer_stamp_begin.':00.000 ';
+			$parameters['answer_stamp_end'] = $answer_stamp_end.':59.999 ';
+
+		}
 	}
 	else {
 		if (!empty($answer_stamp_begin)) {
@@ -435,9 +450,16 @@
 		}
 	}
 	if (!empty($end_stamp_begin) && !empty($end_stamp_end)) {
-		$sql .= "and end_stamp between :end_stamp_begin::timestamptz and :end_stamp_end::timestamptz \n";
-		$parameters['end_stamp_begin'] = $end_stamp_begin.':00.000 '.$time_zone;
-		$parameters['end_stamp_end'] = $end_stamp_end.':59.999 '.$time_zone;
+		if ($db_type == 'pgsql'){
+			$sql .= "and end_stamp between :end_stamp_begin::timestamptz and :end_stamp_end::timestamptz \n";
+			$parameters['end_stamp_begin'] = $end_stamp_begin.':00.000 '.$time_zone;
+			$parameters['end_stamp_end'] = $end_stamp_end.':59.999 '.$time_zone;
+		}
+		else{
+			$sql .= "and end_stamp between :end_stamp_begin and :end_stamp_end \n";
+			$parameters['end_stamp_begin'] = $end_stamp_begin.':00.000 ';
+			$parameters['end_stamp_end'] = $end_stamp_end.':59.999 ';
+		}
 	}
 	else {
 		if (!empty($end_stamp_begin)) {
