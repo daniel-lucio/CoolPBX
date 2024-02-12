@@ -411,6 +411,12 @@
 	}
 
 	if (!empty($start_stamp_begin) && !empty($start_stamp_end)) {
+		$start_epoch_begin = strtotime($start_stamp_begin.' '.$time_zone);
+		$start_epoch_end = strtotime($start_stamp_end.' '.$time_zone);
+		$sql .= "and start_epoch between :start_epoch_begin and :start_epoch_end \n";
+		$parameters['start_epoch_begin'] = $start_epoch_begin;
+		$parameters['start_epoch_end'] = $start_epoch_end;
+		/**
 		if ($db_type == 'pgsql'){
 			$sql .= "and start_stamp between :start_stamp_begin::timestamptz and :start_stamp_end::timestamptz \n";
 			$parameters['start_stamp_begin'] = $start_stamp_begin.':00.000 '.$time_zone;
@@ -421,18 +427,29 @@
 			$parameters['start_stamp_begin'] = $start_stamp_begin.':00.000 ';
 			$parameters['start_stamp_end'] = $start_stamp_end.':59.999 ';
 		}
+		**/
 	}
-	else {
+	else {	
 		if (!empty($start_stamp_begin)) {
-			$sql .= "and start_stamp >= :start_stamp_begin \n";
-			$parameters['start_stamp_begin'] = $start_stamp_begin.':00.000 '.$time_zone;
+			$start_epoch_begin = strtotime($start_stamp_begin.' '.$time_zone);
+			$sql .= "and start_stamp >= :start_epoch_begin \n";
+			$parameters['start_epoch_begin'] = $start_epoch_end;
+
 		}
 		if (!empty($start_stamp_end)) {
-			$sql .= "and start_stamp <= :start_stamp_end \n";
-			$parameters['start_stamp_end'] = $start_stamp_end.':59.999 '.$time_zone;
+			$start_epoch_end = strtotime($start_stamp_end.' '.$time_zone);
+			$sql .= "and start_epoch <= :start_epoch_end \n";
+			$parameters['start_epoch_end'] = $start_epoch_end;
 		}
 	}
 	if (!empty($answer_stamp_begin) && !empty($answer_stamp_end)) {
+		$answer_epoch_begin = strtotime($answer_stamp_begin.' '.$time_zone);
+		$answer_epoch_end = strtotime($answer_stamp_end.' '.$time_zone);
+		$sql .= "and answer_epoch between :answer_epoch_begin and :answer_epoch_end \n";
+		$parameters['answer_epoch_begin'] = $answer_epoch_begin;
+		$parameters['answer_epoch_end'] = $answer_epoch_end;
+
+		/**
 		if ($db_type == 'pgsql'){
 			$sql .= "and answer_stamp between :answer_stamp_begin::timestamptz and :answer_stamp_end::timestamptz \n";
 			$parameters['answer_stamp_begin'] = $answer_stamp_begin.':00.000 '.$time_zone;
@@ -444,18 +461,29 @@
 			$parameters['answer_stamp_end'] = $answer_stamp_end.':59.999 ';
 
 		}
+		*//
 	}
 	else {
 		if (!empty($answer_stamp_begin)) {
-			$sql .= "and answer_stamp >= :answer_stamp_begin \n";
-			$parameters['answer_stamp_begin'] = $answer_stamp_begin.':00.000 '.$time_zone;;
+			$answer_epoch_begin = strtotime($answer_stamp_begin.' '.$time_zone);
+			$sql .= "and answer_epoch >= :answer_epoch_begin \n";
+			$parameters['answer_epoch_begin'] = $answer_epoch_begin;
+
 		}
 		if (!empty($answer_stamp_end)) {
-			$sql .= "and answer_stamp <= :answer_stamp_end \n";
-			$parameters['answer_stamp_end'] = $answer_stamp_end.':59.999 '.$time_zone;
+			$answer_epoch_end = strtotime($answer_stamp_end.' '.$time_zone);
+			$sql .= "and answer_epoch <= :answer_epoch_end \n";
+			$parameters['answer_epoch_end'] = $answer_epoch_end;
 		}
 	}
 	if (!empty($end_stamp_begin) && !empty($end_stamp_end)) {
+		$end_epoch_begin = strtotime($end_stamp_begin.' '.$time_zone);
+		$end_epoch_end = strtotime($end_stamp_end.' '.$time_zone);
+		$sql .= "and end_epoch between :end_epoch_begin and :end_epoch_end \n";
+		$parameters['end_epoch_begin'] = $end_epoch_begin;
+		$parameters['end_epoch_end'] = $end_epoch_end;
+
+		/**
 		if ($db_type == 'pgsql'){
 			$sql .= "and end_stamp between :end_stamp_begin::timestamptz and :end_stamp_end::timestamptz \n";
 			$parameters['end_stamp_begin'] = $end_stamp_begin.':00.000 '.$time_zone;
@@ -466,15 +494,18 @@
 			$parameters['end_stamp_begin'] = $end_stamp_begin.':00.000 ';
 			$parameters['end_stamp_end'] = $end_stamp_end.':59.999 ';
 		}
+		**/
 	}
 	else {
 		if (!empty($end_stamp_begin)) {
-			$sql .= "and end_stamp >= :end_stamp_begin \n";
-			$parameters['end_stamp_begin'] = $end_stamp_begin.':00.000 '.$time_zone;
+			$end_epoch_begin = strtotime($end_stamp_begin.' '.$time_zone);
+			$sql .= "and end_epoch >= :end_epoch_begin \n";
+			$parameters['end_epoch_begin'] = $end_epoch_begin;
 		}
 		if (!empty($end_stamp_end)) {
-			$sql .= "and end_stamp <= :end_stamp_end \n";
-			$parameters['end_stamp'] = $end_stamp_end.':59.999 '.$time_zone;
+			$end_epoch_end = strtotime($end_stamp_end.' '.$time_zone);
+			$sql .= "and end_epoch <= :end_epoch_end \n";
+			$parameters['end_epoch_end'] = $end_epoch_end;
 		}
 	}
 	if (is_numeric($duration_min)) {
