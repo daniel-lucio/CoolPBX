@@ -461,7 +461,7 @@
 			$parameters['answer_stamp_end'] = $answer_stamp_end.':59.999 ';
 
 		}
-		*//
+		**/
 	}
 	else {
 		if (!empty($answer_stamp_begin)) {
