@@ -608,13 +608,10 @@
 	}
 	if ($export_format !== "csv" && $export_format !== "pdf") {
 		if ($rows_per_page == 0) {
-			$sql .= " limit :limit offset 0 \n";
-			$parameters['limit'] = $_SESSION['cdr']['limit']['numeric'];
+			$sql .= " limit ".$_SESSION['cdr']['limit']['numeric']." offset 0 \n";
 		}
 		else {
-			$sql .= " limit :limit offset :offset \n";
-			$parameters['limit'] = intval($rows_per_page);
-			$parameters['offset'] = intval($offset);
+			$sql .= " limit ".intval($rows_per_page)." offset ".intval($offset)." \n";
 		}
 	}
 	$sql = str_replace("  ", " ", $sql);
