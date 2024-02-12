@@ -241,7 +241,6 @@
 	else {
 		$time_zone = date_default_timezone_get();
 	}
-	$parameters['time_zone'] = $time_zone;
 
 //get the results from the db
 	$sql = "select \n";
