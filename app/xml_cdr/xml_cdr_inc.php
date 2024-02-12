@@ -250,8 +250,15 @@
 	$sql .= "e.extension, \n";
 	$sql .= "c.start_stamp, \n";
 	$sql .= "c.end_stamp, \n";
-	$sql .= "to_char(timezone(:time_zone, start_stamp), 'DD Mon YYYY') as start_date_formatted, \n";
-	$sql .= "to_char(timezone(:time_zone, start_stamp), 'HH12:MI:SS am') as start_time_formatted, \n";
+	if ($db_type == 'pgsql'){
+		$sql .= "to_char(timezone(:time_zone, start_stamp), 'DD Mon YYYY') as start_date_formatted, \n";
+		$sql .= "to_char(timezone(:time_zone, start_stamp), 'HH12:MI:SS am') as start_time_formatted, \n";
+		$parameters['time_zone'] = $time_zone;
+	}
+	else{
+		$sql .= "DATE_FORMAT(start_stamp, '%a %d %b %Y %r') as start_date_formatted, \n";
+		$sql .= "DATE_FORMAT(start_stamp, '%a %d %b %Y %r') as start_time_formatted, \n";
+	}
 	$sql .= "c.start_epoch, \n";
 	$sql .= "c.hangup_cause, \n";
 	$sql .= "c.duration, \n";
