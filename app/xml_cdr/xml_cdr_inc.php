@@ -636,9 +636,6 @@
 	$result_count = is_array($result) ? sizeof($result) : 0;
 	unset($database, $sql, $parameters);
 
-	if ($result['code'] != '200'){
-		print '<pre>'.print_r($result, true).'</pre>';
-	}
 //return the paging
 	if (empty($_REQUEST['export_format'])) {
 		list($paging_controls_mini, $rows_per_page) = paging($num_rows, $param, $rows_per_page, true, $result_count); //top
