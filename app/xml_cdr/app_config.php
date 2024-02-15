@@ -631,7 +631,7 @@
 		$apps[$x]['db'][$y]['fields'][$z]['name'] = "pdd_ms";
 		$apps[$x]['db'][$y]['fields'][$z]['type']['pgsql'] = "numeric";
 		$apps[$x]['db'][$y]['fields'][$z]['type']['sqlite'] = "numeric";
-		$apps[$x]['db'][$y]['fields'][$z]['type']['mysql'] = "smallint";
+		$apps[$x]['db'][$y]['fields'][$z]['type']['mysql'] = "int";
 		$apps[$x]['db'][$y]['fields'][$z]['description']['en-us'] = "Post Dial Delay (PDD) in miliseconds. Divide by 1000 for seconds.";
 		$z++;
 		$apps[$x]['db'][$y]['fields'][$z]['name'] = "rtp_audio_in_mos";
