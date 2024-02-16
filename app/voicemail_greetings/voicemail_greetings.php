@@ -256,7 +256,7 @@
 	}
 
 //set the greeting
-	if (!empty($_REQUEST['action']) == "set") {
+	if (!empty($_REQUEST['action']) && $_REQUEST['action'] == "set") {
 		//save the greeting_id to a variable
 		$greeting_id = $_REQUEST['greeting_id'];
 
