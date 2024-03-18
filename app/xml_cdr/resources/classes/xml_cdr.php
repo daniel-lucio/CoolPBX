@@ -193,7 +193,8 @@ if (!class_exists('xml_cdr')) {
 			$this->fields[] = "sip_hangup_disposition";
 			if (is_array($_SESSION['cdr']['field'])) {
 				foreach ($_SESSION['cdr']['field'] as $field) {
-					$field_name = end($field);
+					$tokens = explode(' ', $field);
+					$field_name = end($tokens);
 					$this->fields[] = $field_name;
 				}
 			}
