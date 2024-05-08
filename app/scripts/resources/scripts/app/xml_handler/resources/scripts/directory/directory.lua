@@ -405,6 +405,10 @@ continue = true;
 												if (profile == 'user_not_registered') then
 													profile = 'internal';
 												end
+												local exchange_profile = xml_handler and xml_handler["exchange_profile"];
+												if (exchange_profile ~= nil) then
+													profile = xml_handler["exchange_profile"];
+												end
 												dial_string = "{sip_h_X-context=" .. domain_name .. ",sip_invite_domain=" .. domain_name .. ",presence_id=" .. presence_id .."}sofia/" .. profile .. "/" .. destination .. ";fs_path=sip:" .. proxy;
 												--freeswitch.consoleLog("notice", "[xml_handler][directory] dial_string " .. dial_string .. "\n");
 											end
