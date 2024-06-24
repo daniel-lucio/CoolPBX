@@ -117,7 +117,7 @@
 
 //get the list
 	$sql = "select domain_setting_uuid, domain_setting_category, domain_setting_subcategory, domain_setting_name, ";
-	$sql .= "domain_setting_value, cast(domain_setting_enabled as text), domain_setting_description ";
+	$sql .= "domain_setting_value, " . ($db_type == "mysql" ? "domain_setting_enabled" : "cast(domain_setting_enabled as text)") .", domain_setting_description ";
 	$sql .= "from v_domain_settings ";
 	$sql .= "where domain_uuid = :domain_uuid ";
 	if ($order_by == '') {
