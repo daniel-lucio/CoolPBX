@@ -331,7 +331,7 @@
 //pre-populate the form
 	if (empty($_POST["persistformvar"]) && !empty($_GET["id"]) && is_uuid($_GET["id"])) {
 		$domain_setting_uuid = $_GET["id"];
-		$sql = "select domain_setting_uuid, domain_setting_category, domain_setting_subcategory, domain_setting_name, domain_setting_value, domain_setting_order, cast(domain_setting_enabled as text), domain_setting_description ";
+		$sql = "select domain_setting_uuid, domain_setting_category, domain_setting_subcategory, domain_setting_name, domain_setting_value, domain_setting_order, " . ($db_type == "mysql" ? "domain_setting_enabled" : "cast(domain_setting_enabled as text)") . ", domain_setting_description ";
 		$sql .= "from v_domain_settings ";
 		$sql .= "where domain_uuid = :domain_uuid ";
 		$sql .= "and domain_setting_uuid = :domain_setting_uuid ";
