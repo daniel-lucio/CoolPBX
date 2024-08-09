@@ -76,7 +76,12 @@
 	$sql .= "dashboard_column_span, \n";
 	$sql .= "dashboard_details_state, \n";
 	$sql .= "dashboard_order, \n";
-	$sql .= "cast(dashboard_enabled as text), \n";
+	if ($db_type == 'pgsql'){
+		$sql .= "cast(dashboard_enabled as text), \n";
+	}
+	else{
+		$sql .= "dashboard_enabled, \n";
+	}
 	$sql .= "dashboard_description \n";
 	$sql .= "from v_dashboard as d \n";
 	$sql .= "where dashboard_enabled = 'true' \n";
