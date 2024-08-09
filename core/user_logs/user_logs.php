@@ -115,13 +115,17 @@
 	}
 	if (!empty($search)) {
 		$sql .= "and ( ";
-		$sql .= "	lower(username) like :search ";
-		$sql .= "	or lower(type) like :search ";
-		$sql .= "	or lower(result) like :search ";
-		$sql .= "	or lower(remote_address) like :search ";
-		$sql .= "	or lower(user_agent) like :search ";
+		$sql .= "	lower(username) like :search1 ";
+		$sql .= "	or lower(type) like :search2 ";
+		$sql .= "	or lower(result) like :search3 ";
+		$sql .= "	or lower(remote_address) like :search4 ";
+		$sql .= "	or lower(user_agent) like :search5 ";
 		$sql .= ") ";
-		$parameters['search'] = '%'.$search.'%';
+		$parameters['search1'] = '%'.$search.'%';
+		$parameters['search2'] = '%'.$search.'%';
+		$parameters['search3'] = '%'.$search.'%';
+		$parameters['search4'] = '%'.$search.'%';
+		$parameters['search5'] = '%'.$search.'%';
 	}
 	$database = new database;
 	$num_rows = $database->select($sql, $parameters ?? null, 'column');
@@ -143,15 +147,21 @@
 	else {
 		$time_zone = date_default_timezone_get();
 	}
-	$parameters['time_zone'] = $time_zone;
 
 //get the list
 	$sql = "select ";
 	$sql .= "user_log_uuid, ";
 	$sql .= "u.domain_uuid, ";
 	$sql .= "d.domain_name, ";
-	$sql .= "to_char(timezone(:time_zone, timestamp), 'DD Mon YYYY') as date_formatted, ";
-	$sql .= "to_char(timezone(:time_zone, timestamp), 'HH12:MI:SS am') as time_formatted, ";
+	if ($db_type == 'pg_sql'){
+		$sql .= "to_char(timezone(:time_zone, timestamp), 'DD Mon YYYY') as date_formatted, ";
+		$sql .= "to_char(timezone(:time_zone, timestamp), 'HH12:MI:SS am') as time_formatted, ";
+		$parameters['time_zone'] = $time_zone;
+	}
+	else{
+		$sql .= "date_format(timestamp, '%d %M %Y') as date_formatted, ";
+		$sql .= "date_format(timestamp, '%r') as time_formatted, ";
+	}
 	$sql .= "user_uuid, ";
 	$sql .= "username, ";
 	$sql .= "type, ";
@@ -168,13 +178,17 @@
 	}
 	if (!empty($search)) {
 		$sql .= "and ( ";
-		$sql .= "	lower(username) like :search ";
-		$sql .= "	or lower(type) like :search ";
-		$sql .= "	or lower(result) like :search ";
-		$sql .= "	or lower(remote_address) like :search ";
-		$sql .= "	or lower(user_agent) like :search ";
+		$sql .= "	lower(username) like :search1 ";
+		$sql .= "	or lower(type) like :search2 ";
+		$sql .= "	or lower(result) like :search3 ";
+		$sql .= "	or lower(remote_address) like :search4 ";
+		$sql .= "	or lower(user_agent) like :search5 ";
 		$sql .= ") ";
-		$parameters['search'] = '%'.$search.'%';
+		$parameters['search1'] = '%'.$search.'%';
+		$parameters['search2'] = '%'.$search.'%';
+		$parameters['search3'] = '%'.$search.'%';
+		$parameters['search4'] = '%'.$search.'%';
+		$parameters['search5'] = '%'.$search.'%';
 	}
 	$sql .= "and u.domain_uuid = d.domain_uuid ";
 	$sql .= order_by($order_by, $order, 'timestamp', 'desc');
