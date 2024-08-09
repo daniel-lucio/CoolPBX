@@ -57,114 +57,273 @@
 			return $this->domain_uuid;
 		}
 
-		public static function get_vendor($mac) {
-			//return if the mac address is empty
-				if(empty($mac)) {
-					return '';
-				}
+                public static function get_vendor($mac) {
+                        //return if the mac address is empty
+                                if(empty($mac)) {
+                                        return '';
+                                }
 
-			//use the mac address to find the vendor
-				$mac = preg_replace('#[^a-fA-F0-9./]#', '', $mac);
-				$mac = strtolower($mac);
-				switch (substr($mac, 0, 6)) {
-				case "00085d":
-					$device_vendor = "aastra";
-					break;
-				case "001873":
-					$device_vendor = "cisco";
-					break;
-				case "a44c11":
-					$device_vendor = "cisco";
-					break;
-				case "0021A0":
-					$device_vendor = "cisco";
-					break;
-				case "30e4db":
-					$device_vendor = "cisco";
-					break;
-				case "002155":
-					$device_vendor = "cisco";
-					break;
-				case "68efbd":
-					$device_vendor = "cisco";
-					break;
-				case "000b82":
-					$device_vendor = "grandstream";
-					break;
-				case "00177d":
-					$device_vendor = "konftel";
-					break;
-				case "00045a":
-					$device_vendor = "linksys";
-					break;
-				case "000625":
-					$device_vendor = "linksys";
-					break;
-				case "000e08":
-					$device_vendor = "linksys";
-					break;
-				case "08000f":
-					$device_vendor = "mitel";
-					break;
-				case "0080f0":
-					$device_vendor = "panasonic";
-					break;
-				case "0004f2":
-					$device_vendor = "polycom";
-					break;
-				case "00907a":
-					$device_vendor = "polycom";
-					break;
-				case "64167f":
-					$device_vendor = "polycom";
-					break;
-				case "482567":
-					$device_vendor = "polycom";
-					break;
-				case "000413":
-					$device_vendor = "snom";
-					break;
-				case "001565":
-					$device_vendor = "yealink";
-					break;
-				case "805ec0":
-					$device_vendor = "yealink";
-					break;
-				case "00268B":
-					$device_vendor = "escene";
-					break;
-				case "001fc1":
-					$device_vendor = "htek";
-					break;
-				case "0C383E":
-					$device_vendor = "fanvil";
-					break;
-				case "7c2f80":
-					$device_vendor = "gigaset";
-					break;
-				case "14b370":
-					$device_vendor = "gigaset";
-					break;
-				case "002104":
-					$device_vendor = "gigaset";
-					break;
-				case "bcc342":
-					$device_vendor = "panasonic";
-					break;
-				case "080023":
-					$device_vendor = "panasonic";
-					break;
-				case "0080f0":
-					$device_vendor = "panasonic";
-					break;
-				case "0021f2":
-					$device_vendor = "flyingvoice";
-					break;					
-				default:
-					$device_vendor = "";
-				}
-				return $device_vendor;
-		}
+                        //use the mac address to find the vendor
+                                $mac = preg_replace('#[^a-fA-F0-9./]#', '', $mac);
+                                $mac = strtolower($mac);
+                                switch (substr($mac, 0, 6)) {
+                                case "00085d":
+                                        $device_vendor = "aastra";
+                                        break;
+                                case "00040d":
+                                        $device_vendor = "avaya";
+                                        break;
+                                case "001b4f":
+                                        $device_vendor = "avaya";
+                                        break;
+                                case "00549f":
+                                        $device_vendor = "avaya";
+                                        break;
+                                case "048a15":
+                                        $device_vendor = "avaya";
+                                        break;
+                                case "10cdae":
+                                        $device_vendor = "avaya";
+                                        break;
+                                case "14612f":
+                                        $device_vendor = "avaya";
+                                        break;
+                                case "24b209":
+                                        $device_vendor = "avaya";
+                                        break;
+                                case "24d921":
+                                        $device_vendor = "avaya";
+                                        break;
+                                case "2cf4c5":
+                                        $device_vendor = "avaya";
+                                        break;
+                                case "3475c7":
+                                        $device_vendor = "avaya";
+                                        break;
+                                case "38bb3c":
+                                        $device_vendor = "avaya";
+                                        break;
+                                case "3c3a73":
+                                        $device_vendor = "avaya";
+                                        break;
+                                case "3cb15b":
+                                        $device_vendor = "avaya";
+                                        break;
+                                case "44322a":
+                                        $device_vendor = "avaya";
+                                        break;
+                                case "506184":
+                                        $device_vendor = "avaya";
+                                        break;
+                                case "50cd22":
+                                        $device_vendor = "avaya";
+                                        break;
+                                case "581626":
+                                        $device_vendor = "avaya";
+                                        break;
+                                case "6049c1":
+                                        $device_vendor = "avaya";
+                                        break;
+                                case "646a52":
+                                        $device_vendor = "avaya";
+                                        break;
+                                case "64a7dd":
+                                        $device_vendor = "avaya";
+                                        break;
+                                case "64c354":
+                                        $device_vendor = "avaya";
+                                        break;
+                                case "6ca849":
+                                        $device_vendor = "avaya";
+                                        break;
+                                case "6cfa58":
+                                        $device_vendor = "avaya";
+                                        break;
+                                case "703018":
+                                        $device_vendor = "avaya";
+                                        break;
+                                case "7038ee":
+                                        $device_vendor = "avaya";
+                                        break;
+                                case "7052c5":
+                                        $device_vendor = "avaya";
+                                        break;
+                                case "707c69":
+                                        $device_vendor = "avaya";
+                                        break;
+                                case "801daa":
+                                        $device_vendor = "avaya";
+                                        break;
+                                case "848371":
+                                        $device_vendor = "avaya";
+                                        break;
+                                case "90fb5b":
+                                        $device_vendor = "avaya";
+                                        break;
+                                case "a009ed":
+                                        $device_vendor = "avaya";
+                                        break;
+                                case "a01290":
+                                        $device_vendor = "avaya";
+                                        break;
+                                case "a051c6":
+                                        $device_vendor = "avaya";
+                                        break;
+                                case "a4251b":
+                                        $device_vendor = "avaya";
+                                        break;
+                                case "a47886":
+                                        $device_vendor = "avaya";
+                                        break;
+                                case "b0adaa":
+                                        $device_vendor = "avaya";
+                                        break;
+                                case "b4475e":
+                                        $device_vendor = "avaya";
+                                        break;
+                                case "b4a95a":
+                                        $device_vendor = "avaya";
+                                        break;
+                                case "b4b017":
+                                        $device_vendor = "avaya";
+                                        break;
+                                case "bcadab":
+                                        $device_vendor = "avaya";
+                                        break;
+                                case "c057bc":
+                                        $device_vendor = "avaya";
+                                        break;
+                                case "c4bed4":
+                                        $device_vendor = "avaya";
+                                        break;
+                                case "c81fea":
+                                        $device_vendor = "avaya";
+                                        break;
+                                case "c8f406":
+                                        $device_vendor = "avaya";
+                                        break;
+                                case "ccf954":
+                                        $device_vendor = "avaya";
+                                        break;
+                                case "d47856":
+                                        $device_vendor = "avaya";
+                                        break;
+                                case "d4ea0e":
+                                        $device_vendor = "avaya";
+                                        break;
+                                case "e45d52":
+                                        $device_vendor = "avaya";
+                                        break;
+                                case "f81547":
+                                        $device_vendor = "avaya";
+                                        break;
+                                case "f873a2":
+                                        $device_vendor = "avaya";
+                                        break;
+                                case "fc8399":
+                                        $device_vendor = "avaya";
+                                        break;
+                                case "fca841":
+                                        $device_vendor = "avaya";
+                                        break;
+                                case "001873":
+                                        $device_vendor = "cisco";
+                                        break;
+                                case "a44c11":
+                                        $device_vendor = "cisco";
+                                        break;
+                                case "0021A0":
+                                        $device_vendor = "cisco";
+                                        break;
+                                case "30e4db":
+                                        $device_vendor = "cisco";
+                                        break;
+                                case "002155":
+                                        $device_vendor = "cisco";
+                                        break;
+                                case "68efbd":
+                                        $device_vendor = "cisco";
+                                        break;
+                                case "000b82":
+                                        $device_vendor = "grandstream";
+                                        break;
+                                case "00177d":
+                                        $device_vendor = "konftel";
+                                        break;
+                                case "00045a":
+                                        $device_vendor = "linksys";
+                                        break;
+                                case "000625":
+                                        $device_vendor = "linksys";
+                                        break;
+                                case "000e08":
+                                        $device_vendor = "linksys";
+                                        break;
+                                case "08000f":
+                                        $device_vendor = "mitel";
+                                        break;
+                                case "0080f0":
+                                        $device_vendor = "panasonic";
+                                        break;
+                                case "0004f2":
+                                        $device_vendor = "polycom";
+                                        break;
+                                case "00907a":
+                                        $device_vendor = "polycom";
+                                        break;
+                                case "64167f":
+                                        $device_vendor = "polycom";
+                                        break;
+                                case "482567":
+                                        $device_vendor = "polycom";
+                                        break;
+                                case "000413":
+                                        $device_vendor = "snom";
+                                        break;
+                                case "001565":
+                                        $device_vendor = "yealink";
+                                        break;
+                                case "805ec0":
+                                        $device_vendor = "yealink";
+                                        break;
+                                case "805e0c":
+                                        $device_vendor = "yealink";
+                                        break;
+                                case "00268B":
+                                        $device_vendor = "escene";
+                                        break;
+                                case "001fc1":
+                                        $device_vendor = "htek";
+                                        break;
+                                case "0C383E":
+                                        $device_vendor = "fanvil";
+                                        break;
+                                case "7c2f80":
+                                        $device_vendor = "gigaset";
+                                        break;
+                                case "14b370":
+                                        $device_vendor = "gigaset";
+                                        break;
+                                case "002104":
+                                        $device_vendor = "gigaset";
+                                        break;
+                                case "bcc342":
+                                        $device_vendor = "panasonic";
+                                        break;
+                                case "080023":
+                                        $device_vendor = "panasonic";
+                                        break;
+                                case "0080f0":
+                                        $device_vendor = "panasonic";
+                                        break;
+                                case "0021f2":
+                                        $device_vendor = "flyingvoice";
+                                        break;
+                                default:
+                                        $device_vendor = "";
+                                }
+                                return $device_vendor;
+                }
 
 		public static function get_vendor_by_agent($agent){
 			if ($agent) {
