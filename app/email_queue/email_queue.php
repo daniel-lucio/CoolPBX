@@ -131,13 +131,17 @@
 	$sql .= "where true ";
 	if (isset($search)) {
 		$sql .= "and (";
-		$sql .= "	lower(email_from) like :search ";
-		$sql .= "	or lower(email_to) like :search ";
-		$sql .= "	or lower(email_subject) like :search ";
-		$sql .= "	or lower(email_body) like :search ";
-		$sql .= "	or lower(email_status) like :search ";
+		$sql .= "	lower(email_from) like :search1 ";
+		$sql .= "	or lower(email_to) like :search2 ";
+		$sql .= "	or lower(email_subject) like :search3 ";
+		$sql .= "	or lower(email_body) like :search4 ";
+		$sql .= "	or lower(email_status) like :search5 ";
 		$sql .= ") ";
-		$parameters['search'] = '%'.$search.'%';
+		$parameters['search1'] = '%'.$search.'%';
+		$parameters['search2'] = '%'.$search.'%';
+		$parameters['search3'] = '%'.$search.'%';
+		$parameters['search4'] = '%'.$search.'%';
+		$parameters['search5'] = '%'.$search.'%';
 	}
 	if (isset($_GET["email_status"]) && $_GET["email_status"] != '') {
 		$sql .= "and email_status = :email_status ";
@@ -164,8 +168,15 @@
 //get the list
 	$sql = "select ";
 	$sql .= "email_date, ";
-	$sql .= "to_char(timezone(:time_zone, email_date), 'DD Mon YYYY') as email_date_formatted, \n";
-	$sql .= "to_char(timezone(:time_zone, email_date), 'HH12:MI:SS am') as email_time_formatted, \n";	
+	if ($db_type == 'pgsql'){
+		$sql .= "to_char(timezone(:time_zone, email_date), 'DD Mon YYYY') as email_date_formatted, \n";
+		$sql .= "to_char(timezone(:time_zone, email_date), 'HH12:MI:SS am') as email_time_formatted, \n";
+		$parameters['time_zone'] = $time_zone;
+	}
+	else{
+		$sql .= "date_format(email_date, '%d %M %Y') as email_date_formatted, \n";
+		$sql .= "date_format(email_date, '%r') as email_time_formatted, \n";
+	}
 	$sql .= "email_queue_uuid, ";
 	$sql .= "hostname, ";
 	$sql .= "email_from, ";
@@ -180,13 +191,17 @@
 	$sql .= "where true ";
 	if (isset($search)) {
 		$sql .= "and (";
-		$sql .= "	lower(email_from) like :search ";
-		$sql .= "	or lower(email_to) like :search ";
-		$sql .= "	or lower(email_subject) like :search ";
-		$sql .= "	or lower(email_body) like :search ";
-		$sql .= "	or lower(email_status) like :search ";
+		$sql .= "	lower(email_from) like :search1 ";
+		$sql .= "	or lower(email_to) like :search2 ";
+		$sql .= "	or lower(email_subject) like :search3 ";
+		$sql .= "	or lower(email_body) like :search4 ";
+		$sql .= "	or lower(email_status) like :search5 ";
 		$sql .= ") ";
-		$parameters['search'] = '%'.$search.'%';
+		$parameters['search1'] = '%'.$search.'%';
+		$parameters['search2'] = '%'.$search.'%';
+		$parameters['search3'] = '%'.$search.'%';
+		$parameters['search4'] = '%'.$search.'%';
+		$parameters['search5'] = '%'.$search.'%';
 	}
 	if (isset($_GET["email_status"]) && $_GET["email_status"] != '') {
 		$sql .= "and email_status = :email_status ";
@@ -194,7 +209,6 @@
 	}
 	$sql .= order_by($order_by, $order, 'email_date', 'desc');
 	$sql .= limit_offset($rows_per_page, $offset);
-	$parameters['time_zone'] = $time_zone;
 	$database = new database;
 	$email_queue = $database->select($sql, $parameters, 'all');
 	unset($sql, $parameters);
