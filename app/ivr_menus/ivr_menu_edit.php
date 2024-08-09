@@ -463,11 +463,36 @@
 			}
 	}
 
+//get the ivr menu options
+       $sql = "select * from v_ivr_menu_options ";
+       $sql .= "where ivr_menu_uuid = :ivr_menu_uuid ";
+       if (!permission_exists('ivr_menu_all')){
+               $sql .= "and domain_uuid = :domain_uuid ";
+               $parameters['domain_uuid'] = $_SESSION['domain_uuid'];
+       }
+       $sql .= "order by ivr_menu_option_digits, ivr_menu_option_order asc ";
+       $parameters['ivr_menu_uuid'] = $ivr_menu_uuid;
+       $database = new database;
+       $ivr_menu_options = $database->select($sql, $parameters, 'all');
+       unset($sql, $parameters);
+
+       $domain_uuid = $ivr_menu_options[0]['domain_uuid'];
+
+//get the ivr menus
+       $sql = "select * from v_ivr_menus ";
+       $sql .= "where domain_uuid = :domain_uuid ";
+       $sql .= "order by ivr_menu_extension asc ";
+       $parameters['domain_uuid'] = $domain_uuid; // $_SESSION['domain_uuid'];
+
+       $database = new database;
+       $ivr_menus = $database->select($sql, $parameters, 'all');
+       unset($sql, $parameters);
+
 //pre-populate the form
 	if (empty($ivr_menu_uuid)) { $ivr_menu_uuid = $_REQUEST["id"] ?? null; }
 	if (!empty($ivr_menu_uuid) && is_uuid($ivr_menu_uuid) && empty($_POST["persistformvar"])) {
 		$ivr = new ivr_menu;
-		$ivr->domain_uuid = $_SESSION["domain_uuid"];
+		$ivr->domain_uuid = $domain_uuid; //$_SESSION["domain_uuid"];
 		$ivr->ivr_menu_uuid = $ivr_menu_uuid;
 		$ivr_menus = $ivr->find();
 		if (!empty($ivr_menus)) {
@@ -521,26 +546,6 @@
 	$select_style = $select_style ?? '';
 	$onkeyup = $onkeyup ?? '';
 	
-//get the ivr menu options
-	$sql = "select * from v_ivr_menu_options ";
-	$sql .= "where domain_uuid = :domain_uuid ";
-	$sql .= "and ivr_menu_uuid = :ivr_menu_uuid ";
-	$sql .= "order by ivr_menu_option_digits, ivr_menu_option_order asc ";
-	$parameters['domain_uuid'] = $_SESSION['domain_uuid'];
-	$parameters['ivr_menu_uuid'] = $ivr_menu_uuid;
-	$database = new database;
-	$ivr_menu_options = $database->select($sql, $parameters, 'all');
-	unset($sql, $parameters);
-
-//get the ivr menus
-	$sql = "select * from v_ivr_menus ";
-	$sql .= "where domain_uuid = :domain_uuid ";
-	$sql .= "order by v_ivr_menus asc ";
-	$parameters['domain_uuid'] = $_SESSION['domain_uuid'];
-	$database = new database;
-	$ivr_menus = $database->select($sql, $parameters, 'all');
-	unset($sql, $parameters);
-
 //add an empty row to the options array
 	if (count($ivr_menu_options) == 0) {
 		$rows = $_SESSION['ivr_menu']['option_add_rows']['numeric'];
@@ -625,7 +630,7 @@
 	$sql = "select recording_name, recording_filename from v_recordings ";
 	$sql .= "where domain_uuid = :domain_uuid ";
 	$sql .= "order by recording_name asc ";
-	$parameters['domain_uuid'] = $_SESSION['domain_uuid'];
+	$parameters['domain_uuid'] = $domain_uuid; // $_SESSION['domain_uuid'];
 	$database = new database;
 	$recordings = $database->select($sql, $parameters, 'all');
 	unset($sql, $parameters);
