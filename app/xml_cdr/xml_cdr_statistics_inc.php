@@ -372,58 +372,90 @@
 	else {
 		$time_zone = date_default_timezone_get();
 	}
-	$parameters['time_zone'] = $time_zone;
 
 //build the sql query for xml cdr statistics
 	$sql = "select ";
 	$sql .= "row_number() over() as hours, ";
-	$sql .= "to_char(start_date at time zone :time_zone, 'DD Mon') as date, \n";
-	$sql .= "to_char(start_date at time zone :time_zone, 'HH12:MI am') || ' - ' || to_char(end_date at time zone :time_zone, 'HH12:MI am') as time, \n";
-	$sql .= "extract(epoch from start_date) as start_epoch, ";
-	$sql .= "extract(epoch from end_date) as end_epoch, ";
+	if ($db_type == 'pgsql'){
+		$sql .= "to_char(start_date at time zone :time_zone, 'DD Mon') as date, \n";
+		$sql .= "to_char(start_date at time zone :time_zone, 'HH12:MI am') || ' - ' || to_char(end_date at time zone :time_zone, 'HH12:MI am') as time, \n";
+		$parameters['time_zone'] = $time_zone;
+		$sql .= "extract(epoch from start_date) as start_epoch, ";
+		$sql .= "extract(epoch from end_date) as end_epoch, ";
+	}
+	else{
+		$sql .= "date_format(start_date, '%d %M') as date, \n";
+		$sql .= "concat(date_format(start_date, '%r'), ' - ', date_format(end_date, '%r')) as time, \n";
+		$sql .= "UNIX_TIMESTAMP(start_date) AS start_epoch, UNIX_TIMESTAMP(end_date) AS end_epoch, ";
+	}
 	$sql .= "s_hour, start_date, end_date, volume, answered, (round(d.seconds / 60, 1)) as minutes, \n";
 	$sql .= "(volume / (s_hour * 60)) as calls_per_minute, \n";
 	$sql .= "(volume / s_hour) as calls_per_hour,  missed, \n";
-	$sql .= "(answered::numeric / (s_hour * 60)) as cpm_answered, \n"; //used in the graph
+	if ($db_type == 'pgsql'){
+		$sql .= "(answered::numeric / (s_hour * 60)) as cpm_answered, \n"; //used in the graph
+	}
+	else{
+		$sql .= "(answered / (s_hour * 60)) as cpm_answered, \n"; //used in the graph
+	}
 	$sql .= "(volume / (s_hour * 60)) as avg_min, \n"; //used in the graph
-	$sql .= "(round(100 * (answered::numeric / NULLIF(volume, 0)),2)) as asr, \n";
+	if ($db_type == 'pgsql'){
+		$sql .= "(round(100 * (answered::numeric / NULLIF(volume, 0)),2)) as asr, \n";
+	}
+	else{
+		$sql .= "(round(100 * (answered / NULLIF(volume, 0)),2)) as asr, \n";
+	}
 	$sql .= "(round(seconds / NULLIF(answered, 0) / 60, 2)) as aloc, seconds \n";
 	$sql .= "from \n";
 	$sql .= "( \n";
 	$sql .= "	select \n";
-	$sql .= "	(count(*) filter ( \n";
-	$sql .= "		where start_stamp between s.start_date and s.end_date \n";
-	$sql .= "	)) as volume, \n";
-	$sql .= "	(count(*) filter ( \n";
-	$sql .= "		where start_stamp between s.start_date and s.end_date \n";
-	$sql .= "		and c.originating_leg_uuid IS NULL \n";
-	$sql .= "		and (c.answer_stamp IS NOT NULL and c.bridge_uuid IS NOT NULL) \n";
-	$sql .= "		and (c.cc_side IS NULL or c.cc_side !='agent') \n";
-	$sql .= "	)) as answered, \n";
-	$sql .= "	(count(*) filter ( \n";
-	$sql .= "		where start_stamp between s.start_date and s.end_date \n";
-	$sql .= "		and missed_call = true \n";
-	$sql .= "	)) as missed, \n";
-	$sql .= "	(sum(c.billsec) filter ( \n";
-	$sql .= "		where c.start_stamp between s.start_date and s.end_date \n";
-	$sql .= "	)) as seconds, \n";
+	if ($db_type == 'pgsql'){
+		$sql .= "	(count(*) filter ( \n";
+		$sql .= "		where start_stamp between s.start_date and s.end_date \n";
+		$sql .= "	)) as volume, \n";
+		$sql .= "	(count(*) filter ( \n";
+		$sql .= "		where start_stamp between s.start_date and s.end_date \n";
+		$sql .= "		and c.originating_leg_uuid IS NULL \n";
+		$sql .= "		and (c.answer_stamp IS NOT NULL and c.bridge_uuid IS NOT NULL) \n";
+		$sql .= "		and (c.cc_side IS NULL or c.cc_side !='agent') \n";
+		$sql .= "	)) as answered, \n";
+		$sql .= "	(count(*) filter ( \n";
+		$sql .= "		where start_stamp between s.start_date and s.end_date \n";
+		$sql .= "		and missed_call = true \n";
+		$sql .= "	)) as missed, \n";
+		$sql .= "	(sum(c.billsec) filter ( \n";
+		$sql .= "		where c.start_stamp between s.start_date and s.end_date \n";
+		$sql .= "	)) as seconds, \n";
+	}
+	else{
+		$sql .= "       (SUM(CASE WHEN (start_stamp between s.start_date and s.end_date) THEN 1 ELSE 0 END)) as volume, \n";
+		$sql .= "       (SUM(CASE WHEN ((start_stamp between s.start_date and s.end_date) AND (c.originating_leg_uuid IS NULL) AND (c.answer_stamp IS NOT NULL and c.bridge_uuid IS NOT NULL) AND (c.cc_side IS NULL or c.cc_side !='agent')) THEN 1 ELSE 0 END)) as answered, \n";
+		$sql .= "       (SUM(CASE WHEN ((start_stamp between s.start_date and s.end_date) AND (missed_call = true)) THEN 1 ELSE 0 END)) as missed, \n";
+		$sql .= "       (SUM(CASE WHEN (start_stamp between s.start_date and s.end_date) THEN c.billsec ELSE 0 END)) as seconds, \n";
+	}
 	$sql .= "	s.start_date, \n";
 	$sql .= "	s.end_date, \n";
 	$sql .= "	s.s_hour \n";
 	$sql .= "	from v_xml_cdr as c, \n";
 	$sql .= "	( \n";
 	$sql .= "		select h.s_id, h.s_start, h.s_end, h.s_hour, \n";
-	$sql .= "			(date_trunc('hour', now()) + (interval '1 hour') - (h.s_start * (interval '1 hour'))) as start_date, \n";
-	$sql .= "			(date_trunc('hour', now()) + (interval '1 hour') - (h.s_end * (interval '1 hour'))) as end_date  \n";
-	$sql .= "		from ( \n";
-	$sql .= "				select generate_series(0, 23) as s_id, generate_series(1, 24) as s_start, generate_series(0, 23) as s_end, 1 s_hour \n";
-	$sql .= "				union \n";
-	$sql .= "				select 25 s_id, 24 as s_start, 0 as s_end, 24 s_hour \n";
-	$sql .= "				union \n";
-	$sql .= "				select 26 s_id, 168 as s_start, 0 as s_end, 168 s_hour \n";
-	$sql .= "				union \n";
-	$sql .= "				select 27 s_id, 720 as s_start, 0 as s_end, 720 s_hour \n";
-	$sql .= "			) as h \n";
+	if ($db_type == 'pgsql'){
+		$sql .= "			(date_trunc('hour', now()) + (interval '1 hour') - (h.s_start * (interval '1 hour'))) as start_date, \n";
+		$sql .= "			(date_trunc('hour', now()) + (interval '1 hour') - (h.s_end * (interval '1 hour'))) as end_date  \n";
+		$sql .= "		from ( \n";
+		$sql .= "				select generate_series(0, 23) as s_id, generate_series(1, 24) as s_start, generate_series(0, 23) as s_end, 1 s_hour \n";
+		$sql .= "				union \n";
+		$sql .= "				select 25 s_id, 24 as s_start, 0 as s_end, 24 s_hour \n";
+		$sql .= "				union \n";
+		$sql .= "				select 26 s_id, 168 as s_start, 0 as s_end, 168 s_hour \n";
+		$sql .= "				union \n";
+		$sql .= "				select 27 s_id, 720 as s_start, 0 as s_end, 720 s_hour \n";
+		$sql .= "			) as h \n";
+	}
+	else{
+		$sql .= "                       date_format(now() + interval (1 - h.s_start) hour, '%Y-%m-%d %H:00:00' ) as start_date, \n";
+		$sql .= "                       date_format(now() + interval (1 - h.s_end) hour, '%Y-%m-%d %H:00:00' ) as end_date  \n";
+		$sql .= "from h \n";
+	}
 	$sql .= "		where true \n";
 	$sql .= "		group by s_id, s_hour, s_start, s_end \n";
 	$sql .= "		order by s_id asc \n";
@@ -591,7 +623,7 @@
 
 	$sql .= "	group by s.s_id, s.start_date, s.end_date, s.s_hour \n";
 	$sql .= "	order by s.s_id asc \n";
-	$sql .= ") as d; \n";
+	$sql .= ") as d order by s_hour, hours; \n";
 	$database = new database;
 	$stats = $database->select($sql, $parameters, 'all');
 
