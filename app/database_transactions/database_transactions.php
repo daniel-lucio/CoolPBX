@@ -77,16 +77,28 @@
 	}
 	if (!empty($search)) {
 		$sql .= "and (";
-		$sql .= "	lower(t.app_name) like :search ";
-		$sql .= "	or lower(t.transaction_code) like :search ";
-		$sql .= "	or lower(t.transaction_address) like :search ";
+		$sql .= "	lower(t.app_name) like :search1 ";
+		$sql .= "	or lower(t.transaction_code) like :search2 ";
+		$sql .= "	or lower(t.transaction_address) like :search3 ";
 		$sql .= "	or lower(t.transaction_type) like :search ";
-		$sql .= "	or cast(t.transaction_date as text) like :search ";
-		$sql .= "	or lower(t.transaction_old) like :search ";
-		$sql .= "	or lower(t.transaction_new) like :search ";
-		$sql .= "	or lower(u.username) like :search ";
+		if ($db_type == 'pgsql'){
+			$sql .= "	or cast(t.transaction_date as text) like :search5 ";
+		}
+		else{
+			$sql .= "       or t.transaction_date like :search5 ";
+		}
+		$sql .= "	or lower(t.transaction_old) like :search6 ";
+		$sql .= "	or lower(t.transaction_new) like :search7 ";
+		$sql .= "	or lower(u.username) like :search8 ";
 		$sql .= ") ";
-		$parameters['search'] = '%'.$search.'%';
+		$parameters['search1'] = '%'.$search.'%';
+		$parameters['search2'] = '%'.$search.'%';
+		$parameters['search3'] = '%'.$search.'%';
+		$parameters['search4'] = '%'.$search.'%';
+		$parameters['search5'] = '%'.$search.'%';
+		$parameters['search6'] = '%'.$search.'%';
+		$parameters['search7'] = '%'.$search.'%';
+		$parameters['search8'] = '%'.$search.'%';
 	};
 	$parameters['domain_uuid'] = $_SESSION['domain_uuid'];
 	$database = new database;
@@ -115,16 +127,28 @@
 	}
 	if (!empty($search)) {
 		$sql .= "and (";
-		$sql .= "	lower(t.app_name) like :search ";
-		$sql .= "	or lower(t.transaction_code) like :search ";
-		$sql .= "	or lower(t.transaction_address) like :search ";
-		$sql .= "	or lower(t.transaction_type) like :search ";
-		$sql .= "	or cast(t.transaction_date as text) like :search ";
-		$sql .= "	or lower(t.transaction_old) like :search ";
-		$sql .= "	or lower(t.transaction_new) like :search ";
-		$sql .= "	or lower(u.username) like :search ";
+		$sql .= "	lower(t.app_name) like :search1 ";
+		$sql .= "	or lower(t.transaction_code) like :search2 ";
+		$sql .= "	or lower(t.transaction_address) like :search3 ";
+		$sql .= "	or lower(t.transaction_type) like :search4 ";
+		if ($db_type == 'pgsql'){
+			$sql .= "	or cast(t.transaction_date as text) like :search5 ";
+		}
+		else{
+			$sql .= "       or t.transaction_date like :search5 ";
+		}
+		$sql .= "	or lower(t.transaction_old) like :search6 ";
+		$sql .= "	or lower(t.transaction_new) like :search7 ";
+		$sql .= "	or lower(u.username) like :searc8 ";
 		$sql .= ") ";
-		$parameters['search'] = '%'.$search.'%';
+		$parameters['search1'] = '%'.$search.'%';
+		$parameters['search2'] = '%'.$search.'%';
+		$parameters['search3'] = '%'.$search.'%';
+		$parameters['search4'] = '%'.$search.'%';
+		$parameters['search5'] = '%'.$search.'%';
+		$parameters['search6'] = '%'.$search.'%';
+		$parameters['search7'] = '%'.$search.'%';
+		$parameters['search8'] = '%'.$search.'%';
 	}
 	$parameters['domain_uuid'] = $_SESSION['domain_uuid'];
 	$sql .= order_by($order_by, $order, 't.transaction_date', 'desc');
