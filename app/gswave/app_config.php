@@ -33,6 +33,8 @@
 		$y=0;
 		$apps[$x]['permissions'][$y]['name'] = "gswave_view";
 		$apps[$x]['permissions'][$y]['groups'][] = "superadmin";
+		$apps[$x]['permissions'][$y]['groups'][] = "admin";
+		$apps[$x]['permissions'][$y]['groups'][] = "user";
 		$y++;
 
 ?>
