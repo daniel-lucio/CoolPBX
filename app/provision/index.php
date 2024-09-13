@@ -48,6 +48,7 @@
 	//if (!empty($_REQUEST['template'])) {
 	//	$device_template = $_REQUEST['template'];
 	//}
+	syslog(LOG_WARNING, '['.$_SERVER['REMOTE_ADDR']."] mac: $mac file: $file ext: $ext");
 
 //get the mac address for Cisco 79xx in the URL as &name=SEP000000000000
 	if (empty($mac)) {
@@ -86,7 +87,7 @@
 	}
 
 //check alternate MAC source
-	if (empty($mac)) {
+//	if (empty($mac)) {
 		//set the http user agent
 			//$_SERVER['HTTP_USER_AGENT'] = "Yealink SIP-T38G  38.70.0.125 00:15:65:00:00:00";
 			//$_SERVER['HTTP_USER_AGENT'] = "Yealink SIP-T56A  58.80.0.25 001565f429a4"; 
@@ -130,7 +131,7 @@
 				$mac = substr($_SERVER['HTTP_USER_AGENT'],-17);
 				$mac = preg_replace("#[^a-fA-F0-9./]#", "", $mac);
 			}
-	}
+//	}
 
 //prepare the mac address
 	if (isset($mac)) {
@@ -454,6 +455,7 @@
 			header('Content-Length: '.strlen($file_contents));
 	}
 	else {
+		syslog(LOG_WARNING, '['.$_SERVER['REMOTE_ADDR']."] $mac is $device_vendor");
 		$cfg_ext = ".cfg";
 		if ($device_vendor === "aastra" && strrpos($file, $cfg_ext, 0) === strlen($file) - strlen($cfg_ext)) {
 			header("Content-Type: text/plain");
