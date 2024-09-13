@@ -193,7 +193,15 @@
 		//check for duplicates
 			if ($destination_type == 'inbound' && $destination_number != $db_destination_number && $_SESSION['destinations']['unique']['boolean'] == 'true') {
 				$sql = "select count(*) from v_destinations ";
-				$sql .= "where (destination_number = :destination_number or destination_prefix || destination_number = :destination_number) ";
+				if ($db_type == 'pgsql'){
+                                       $sql .= "where (destination_number = :destination_number or destination_prefix || destination_number = :destination_number) ";
+                                       $parameters['destination_number'] = $destination_number;
+                               }
+                               else{
+                                       $sql .= "where (destination_number = :destination_number1 or CONCAT(destination_prefix, destination_number) = :destination_number2) ";
+                                       $parameters['destination_number1'] = $destination_number;
+                                       $parameters['destination_number2'] = $destination_number;
+                               }
 				$sql .= "and destination_type = 'inbound' ";
 				$parameters['destination_number'] = $destination_number;
 				$database = new database;
