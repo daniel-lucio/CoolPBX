@@ -289,6 +289,18 @@
                                 case "805e0c":
                                         $device_vendor = "yealink";
                                         break;
+                                case "ec1da9":
+                                        $device_vendor = "yealink";
+                                        break;
+                               case "249ad8":
+                                       $device_vendor = "yealink";
+                                       break;
+                                case "c4fc22":
+                                        $device_vendor = "yealink";
+                                        break;
+                                case "44dbd2":
+                                        $device_vendor = "yealink";
+                                        break;
                                 case "00268B":
                                         $device_vendor = "escene";
                                         break;
