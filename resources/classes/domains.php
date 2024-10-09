@@ -171,7 +171,7 @@ if (!class_exists('domains')) {
 										//delete the directories
 											if (!empty($domain_name)) {
 												//set the needle
-												if (count($_SESSION["domains"]) > 1) {
+												if (is_array($_SESSION["domains"]) && (count($_SESSION["domains"]) > 1)) {
 													$v_needle = 'v_'.$domain_name.'_';
 												}
 												else {
