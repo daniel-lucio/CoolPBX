@@ -54,6 +54,7 @@
 
 //initialize the destinations object
 	$destination = new destinations;
+	$domain_uuid = $_SESSION['domain_uuid'];
 
 //action add or update
 	if (!empty($_REQUEST["id"]) && is_uuid($_REQUEST["id"]) || !empty($_REQUEST["ivr_menu_uuid"]) &&  is_uuid($_REQUEST["ivr_menu_uuid"])) {
@@ -1579,6 +1580,7 @@
 			echo "	".$text['label-domain']."\n";
 			echo "</td>\n";
 			echo "<td class='vtable' align='left'>\n";
+			$domain_uuid = $_SESSION['domain_uuid'];
 			echo "    <select class='formfld' name='domain_uuid'>\n";
 			foreach ($_SESSION['domains'] as $row) {
 				if ($row['domain_uuid'] == $domain_uuid) {
