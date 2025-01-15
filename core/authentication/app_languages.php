@@ -1,5 +1,32 @@
 <?php
 
+$text['button-oid']['en-us'] = "OpenID";
+$text['button-oid']['en-gb'] = "OpenID";
+$text['button-oid']['ar-eg'] = "OpenID";
+$text['button-oid']['de-at'] = "OpenID";
+$text['button-oid']['de-ch'] = "OpenID";
+$text['button-oid']['de-de'] = "OpenID";
+$text['button-oid']['el-gr'] = "OpenID";
+$text['button-oid']['es-cl'] = "OpenID";
+$text['button-oid']['es-mx'] = "OpenID";
+$text['button-oid']['fr-ca'] = "OpenID";
+$text['button-oid']['fr-fr'] = "OpenID";
+$text['button-oid']['he-il'] = "OpenID";
+$text['button-oid']['it-it'] = "OpenID";
+$text['button-oid']['nl-nl'] = "OpenID";
+$text['button-oid']['pl-pl'] = "OpenID";
+$text['button-oid']['pt-br'] = "OpenID";
+$text['button-oid']['pt-pt'] = "OpenID";
+$text['button-oid']['ro-ro'] = "OpenID";
+$text['button-oid']['ru-ru'] = "OpenID";
+$text['button-oid']['sv-se'] = "OpenID";
+$text['button-oid']['uk-ua'] = "OpenID";
+$text['button-oid']['tr-tr'] = "OpenID";
+$text['button-oid']['zh-cn'] = "OpenID";
+$text['button-oid']['ja-jp'] = "OpenID";
+$text['button-oid']['ko-kr'] = "OpenID";
+
+
 $text['label-authentication_code']['en-us'] = "Authentication Code";
 $text['label-authentication_code']['en-gb'] = "Authentication Code";
 $text['label-authentication_code']['ar-eg'] = "رمز الدخول";
