@@ -123,178 +123,178 @@ openlog('FusionPBX', LOG_NDELAY, LOG_AUTH);
 syslog(LOG_WARNING, 'openid() GOT A CODE');
 closelog();
 			
-			if($_SESSION['state'] != $_GET['state']) {
-				openlog('FusionPBX', LOG_NDELAY, LOG_AUTH);
-				syslog(LOG_WARNING, "Authorization server returned an invalid state parameter");
-				closelog();
-				die('Authorization server returned an invalid state parameter');
-			}
-
-			if(isset($_GET['error'])) {
-				openlog('FusionPBX', LOG_NDELAY, LOG_AUTH);
-				syslog(LOG_WARNING, 'Authorization server returned an error: '.htmlspecialchars($_GET['error']));
-				closelog();
-				die('Authorization server returned an error: '.htmlspecialchars($_GET['error']));
-			}
-
-			$params = [
-				'grant_type' => 'authorization_code',
-				'code' => $_GET['code'],
-				'redirect_uri' => $settings['login']['destination'],
-				'client_id' => $client_id,
-				'client_secret' => $secret_id,
-				'code_verifier' => $_SESSION['code_verifier'],
-			];
-
-			$ch = curl_init($metadata->token_endpoint);
-			curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-			curl_setopt($ch, CURLOPT_POST, true);
-			curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query($params));
-			$response = json_decode(curl_exec($ch));
-			curl_close($ch);
-			$access_token = $response->access_token;
-
-			if(!isset($response->access_token)) {
-				openlog('FusionPBX', LOG_NDELAY, LOG_AUTH);
-				syslog(LOG_WARNING, 'Error fetching access token');
-				closelog();
-				die('Error fetching access token');
-			}
-
-			$params = [
-				'access_token' => $access_token,
-			];
-			$ch = curl_init($metadata->userinfo_endpoint);
-			curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-			curl_setopt($ch, CURLOPT_POST, true);
-			curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query($params));
-			$userinfo = json_decode(curl_exec($ch));
-			curl_close($ch);
-				
-			if(!isset($userinfo->sub)) {
-				openlog('FusionPBX', LOG_NDELAY, LOG_AUTH);
-				syslog(LOG_WARNING, 'No userinfo returned');
-				closelog();
-				die('No userinfo returned');
-			}
-			$auth_valid = true;
-
-			// Create the user
-
-			$sql = "select * from v_users ";
-			$sql .= "where username=:username ";
-			if ($_SESSION["user"]["unique"]["text"] == "global") {
-					//unique username - global (example: email address)
-			}
-			else {
-					//unique username - per domain
-					$sql .= "and domain_uuid=:domain_uuid ";
-			}
-			$prep_statement = $db->prepare(check_sql($sql));
-			if ($_SESSION["user"]["unique"]["text"] != "global") {
-					$prep_statement->bindParam(':domain_uuid', $this->domain_uuid);
-			}
-			$prep_statement->bindParam(':username', $this->username);
-			$prep_statement->execute();
-			$result = $prep_statement->fetchAll(PDO::FETCH_NAMED);
-			if (count($result) > 0) {
+				if($_SESSION['state'] != $_GET['state']) {
+					openlog('FusionPBX', LOG_NDELAY, LOG_AUTH);
+					syslog(LOG_WARNING, "Authorization server returned an invalid state parameter");
+					closelog();
+					die('Authorization server returned an invalid state parameter');
+				}
+	
+				if(isset($_GET['error'])) {
+					openlog('FusionPBX', LOG_NDELAY, LOG_AUTH);
+					syslog(LOG_WARNING, 'Authorization server returned an error: '.htmlspecialchars($_GET['error']));
+					closelog();
+					die('Authorization server returned an error: '.htmlspecialchars($_GET['error']));
+				}
+	
+				$params = [
+					'grant_type' => 'authorization_code',
+					'code' => $_GET['code'],
+					'redirect_uri' => $settings['login']['destination'],
+					'client_id' => $client_id,
+					'client_secret' => $secret_id,
+					'code_verifier' => $_SESSION['code_verifier'],
+				];
+	
+				$ch = curl_init($metadata->token_endpoint);
+				curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+				curl_setopt($ch, CURLOPT_POST, true);
+				curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query($params));
+				$response = json_decode(curl_exec($ch));
+				curl_close($ch);
+				$access_token = $response->access_token;
+	
+				if(!isset($response->access_token)) {
+					openlog('FusionPBX', LOG_NDELAY, LOG_AUTH);
+					syslog(LOG_WARNING, 'Error fetching access token');
+					closelog();
+					die('Error fetching access token');
+				}
+	
+				$params = [
+					'access_token' => $access_token,
+				];
+				$ch = curl_init($metadata->userinfo_endpoint);
+				curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+				curl_setopt($ch, CURLOPT_POST, true);
+				curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query($params));
+				$userinfo = json_decode(curl_exec($ch));
+				curl_close($ch);
+					
+				if(!isset($userinfo->sub)) {
+					openlog('FusionPBX', LOG_NDELAY, LOG_AUTH);
+					syslog(LOG_WARNING, 'No userinfo returned');
+					closelog();
+					die('No userinfo returned');
+				}
+				$auth_valid = true;
+	
+				// Create the user
+	
+				$sql = "select * from v_users ";
+				$sql .= "where username=:username ";
+				if ($_SESSION["user"]["unique"]["text"] == "global") {
+						//unique username - global (example: email address)
+				}
+				else {
+						//unique username - per domain
+						$sql .= "and domain_uuid=:domain_uuid ";
+				}
+				$prep_statement = $db->prepare(check_sql($sql));
+				if ($_SESSION["user"]["unique"]["text"] != "global") {
+						$prep_statement->bindParam(':domain_uuid', $this->domain_uuid);
+				}
+				$prep_statement->bindParam(':username', $this->username);
+				$prep_statement->execute();
+				$result = $prep_statement->fetchAll(PDO::FETCH_NAMED);
+				if (count($result) > 0) {
 					foreach ($result as &$row) {
-									if ($_SESSION["user"]["unique"]["text"] == "global" && $row["domain_uuid"] != $this->domain_uuid) {
-											//get the domain uuid
-													$this->domain_uuid = $row["domain_uuid"];
-													$this->domain_name = $_SESSION['domains'][$this->domain_uuid]['domain_name'];
+						if ($_SESSION["user"]["unique"]["text"] == "global" && $row["domain_uuid"] != $this->domain_uuid) {
+							//get the domain uuid
+								$this->domain_uuid = $row["domain_uuid"];
+								$this->domain_name = $_SESSION['domains'][$this->domain_uuid]['domain_name'];
 
-											//set the domain session variables
-													$_SESSION["domain_uuid"] = $this->domain_uuid;
-													$_SESSION["domain_name"] = $this->domain_name;
+							//set the domain session variables
+								$_SESSION["domain_uuid"] = $this->domain_uuid;
+								$_SESSION["domain_name"] = $this->domain_name;
 
-											//set the setting arrays
-													$domain = new domains();
-													$domain->db = $db;
-													$domain->set();
-									}
-									$this->user_uuid = $row["user_uuid"];
-									$this->contact_uuid = $row["contact_uuid"];
+							//set the setting arrays
+								$domain = new domains();
+								$domain->db = $db;
+								$domain->set();
+						}
+						$this->user_uuid = $row["user_uuid"];
+						$this->contact_uuid = $row["contact_uuid"];
 					}
-			}
-			else {
+				}
+				else {
 					//salt used with the password to create a one way hash
-							$salt = generate_password('32', '4');
-							$password = generate_password('32', '4');
-
+						$salt = generate_password('32', '4');
+						$password = generate_password('32', '4');
+	
 					//prepare the uuids
-							$this->user_uuid = uuid();
-							$this->contact_uuid = uuid();
-							$this->username = $userinfo->preferred_username;
-
+						$this->user_uuid = uuid();
+						$this->contact_uuid = uuid();
+						$this->username = $userinfo->preferred_username;
+	
 					//add the user
-							$sql = "insert into v_users ";
-							$sql .= "(";
-							$sql .= "domain_uuid, ";
-							$sql .= "user_uuid, ";
-							$sql .= "contact_uuid, ";
-							$sql .= "username, ";
-							$sql .= "password, ";
-							$sql .= "salt, ";
-							$sql .= "add_date, ";
-							$sql .= "add_user, ";
-							$sql .= "user_enabled ";
-							$sql .= ") ";
-							$sql .= "values ";
-							$sql .= "(";
-							$sql .= "'".$this->domain_uuid."', ";
-							$sql .= "'".$this->user_uuid."', ";
-							$sql .= "'".$this->contact_uuid."', ";
-							$sql .= "'".strtolower($this->username)."', ";
-							$sql .= "'".md5($salt.$password)."', ";
-							$sql .= "'".$salt."', ";
-							$sql .= "now(), ";
-							$sql .= "'".strtolower($this->username)."', ";
-							$sql .= "'true' ";
-							$sql .= ")";
-							$db->exec(check_sql($sql));
-							unset($sql);
+						$sql = "insert into v_users ";
+						$sql .= "(";
+						$sql .= "domain_uuid, ";
+						$sql .= "user_uuid, ";
+						$sql .= "contact_uuid, ";
+						$sql .= "username, ";
+						$sql .= "password, ";
+						$sql .= "salt, ";
+						$sql .= "add_date, ";
+						$sql .= "add_user, ";
+						$sql .= "user_enabled ";
+						$sql .= ") ";
+						$sql .= "values ";
+						$sql .= "(";
+						$sql .= "'".$this->domain_uuid."', ";
+						$sql .= "'".$this->user_uuid."', ";
+						$sql .= "'".$this->contact_uuid."', ";
+						$sql .= "'".strtolower($this->username)."', ";
+						$sql .= "'".md5($salt.$password)."', ";
+						$sql .= "'".$salt."', ";
+						$sql .= "now(), ";
+						$sql .= "'".strtolower($this->username)."', ";
+						$sql .= "'true' ";
+						$sql .= ")";
+						$db->exec(check_sql($sql));
+						unset($sql);
 
 					//add the user to group user
-							$group_name = 'user';
-							$sql = "insert into v_group_users ";
-							$sql .= "(";
-							$sql .= "group_user_uuid, ";
-							$sql .= "domain_uuid, ";
-							$sql .= "group_name, ";
-							$sql .= "user_uuid ";
-							$sql .= ")";
-							$sql .= "values ";
-							$sql .= "(";
-							$sql .= "'".uuid()."', ";
-							$sql .= "'".$this->domain_uuid."', ";
-							$sql .= "'".$group_name."', ";
-							$sql .= "'".$this->user_uuid."' ";
-							$sql .= ")";
-							$db->exec(check_sql($sql));
-							unset($sql);
-			}
-	
-			
-			//build the result array
-			$result["plugin"] = "openid";
-			$result["domain_name"] = $_SESSION["domain_name"];
-			$result["username"] = $_SESSION["username"];
-			$result["user_uuid"] = $_SESSION["user_uuid"];
-			$result["domain_uuid"] = $_SESSION["domain_uuid"];
-			$result["contact_uuid"] = $_SESSION["contact_uuid"];
-			$result["authorized"] = $auth_valid ? true : false;
+						$group_name = 'user';
+						$sql = "insert into v_group_users ";
+						$sql .= "(";
+						$sql .= "group_user_uuid, ";
+						$sql .= "domain_uuid, ";
+						$sql .= "group_name, ";
+						$sql .= "user_uuid ";
+						$sql .= ")";
+						$sql .= "values ";
+						$sql .= "(";
+						$sql .= "'".uuid()."', ";
+						$sql .= "'".$this->domain_uuid."', ";
+						$sql .= "'".$group_name."', ";
+						$sql .= "'".$this->user_uuid."' ";
+						$sql .= ")";
+						$db->exec(check_sql($sql));
+						unset($sql);
+				}
+		
+				
+				//build the result array
+				$result["plugin"] = "openid";
+				$result["domain_name"] = $_SESSION["domain_name"];
+				$result["username"] = $_SESSION["username"];
+				$result["user_uuid"] = $_SESSION["user_uuid"];
+				$result["domain_uuid"] = $_SESSION["domain_uuid"];
+				$result["contact_uuid"] = $_SESSION["contact_uuid"];
+				$result["authorized"] = $auth_valid ? true : false;
 openlog('FusionPBX', LOG_NDELAY, LOG_AUTH);
 syslog(LOG_WARNING, 'openid()'.print_r($result, true));
 closelog();
 
 			//add the failed login to user logs
-			if (!$auth_valid) {
-				user_logs::add($result);
-			}
+				if (!$auth_valid) {
+					user_logs::add($result);
+				}
 
 			//retun the array
-			return $result;
+				return $result;
 
 			//$_SESSION['authentication']['plugin']['totp']['plugin'] = "totp";
 			//$_SESSION['authentication']['plugin']['totp']['domain_name'] = $_SESSION["domain_name"];
@@ -304,7 +304,6 @@ closelog();
 			//$_SESSION['authentication']['plugin']['totp']['domain_uuid'] =  $_SESSION["domain_uuid"];
 			//$_SESSION['authentication']['plugin']['totp']['authorized'] = $auth_valid ? true : false;
 		}
-
 	}
 
 	private function base64_urlencode($string) {
