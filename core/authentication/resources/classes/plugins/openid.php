@@ -25,7 +25,7 @@ class plugin_openid {
 	function openid() {
 openlog('FusionPBX', LOG_NDELAY, LOG_AUTH);
 syslog(LOG_WARNING, 'openid()');
-closelog()
+closelog();
 		//pre-process some settings
 			$settings['theme']['favicon'] = !empty($_SESSION['theme']['favicon']['text']) ? $_SESSION['theme']['favicon']['text'] : PROJECT_PATH.'/themes/default/favicon.ico';
 			$settings['login']['destination'] = !empty($_SESSION['login']['destination']['text']) ? $_SESSION['login']['destination']['text'] : '';
