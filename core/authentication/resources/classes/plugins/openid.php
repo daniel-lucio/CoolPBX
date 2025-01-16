@@ -39,9 +39,6 @@ closelog();
 				$settings['login']['destination'] = $_SERVER['REQUEST_SCHEME'].'://'.$_SERVER['HTTP_HOST'].$settings['login']['destination'];
 			}
 			
-		//set the default for $user_authorized to false
-			$user_authorized = false;
-
 		//get the username
 			if (isset($_SESSION["username"])) {
 				$this->username = $_SESSION["username"];
@@ -177,7 +174,7 @@ closelog();
 					closelog();
 					die('No userinfo returned');
 				}
-				$user_authorized = true;
+				$auth_valid = true;
 
 				// Create the user
 
@@ -277,7 +274,7 @@ closelog();
 		
 				
 				//build the result array
-				$result["plugin"] = "totp";
+				$result["plugin"] = "openid";
 				$result["domain_name"] = $_SESSION["domain_name"];
 				$result["username"] = $_SESSION["username"];
 				$result["user_uuid"] = $_SESSION["user_uuid"];
