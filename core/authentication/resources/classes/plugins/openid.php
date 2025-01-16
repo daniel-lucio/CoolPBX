@@ -99,7 +99,7 @@ class plugin_openid {
 				$authorize_url = $metadata->authorization_endpoint.'?'.http_build_query([
 					'response_type' => 'code',
 					'client_id' => $client_id,
-					'redirect_uri' => $settings['login']['destination'],
+					'redirect_uri' => $_SESSION['login']['destination'],
 					'state' => $_SESSION['state'],
 					'scope' => 'openid profile email',
 					'code_challenge' => $code_challenge,
