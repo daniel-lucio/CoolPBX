@@ -95,7 +95,7 @@ class plugin_openid {
 				
 				$_SESSION['state'] = bin2hex(random_bytes(5));
 				$_SESSION['code_verifier'] = bin2hex(random_bytes(50));
-				$code_challenge = base64_urlencode(hash('sha256', $_SESSION['code_verifier'], true));
+				$code_challenge = $this->base64_urlencode(hash('sha256', $_SESSION['code_verifier'], true));
 				$authorize_url = $metadata->authorization_endpoint.'?'.http_build_query([
 					'response_type' => 'code',
 					'client_id' => $client_id,
@@ -296,4 +296,9 @@ class plugin_openid {
 			}
 
 	}
+
+	private function base64_urlencode($string) {
+  		return rtrim(strtr(base64_encode($string), '+/', '-_'), '=');
+	}
+
 }
