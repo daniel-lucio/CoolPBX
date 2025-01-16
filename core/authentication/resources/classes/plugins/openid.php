@@ -32,6 +32,10 @@ class plugin_openid {
 			$settings['theme']['login_logo_width'] = !empty($_SESSION['theme']['login_logo_width']['text']) ? $_SESSION['theme']['login_logo_width']['text'] : 'auto; max-width: 300px';
 			$settings['theme']['login_logo_height'] = !empty($_SESSION['theme']['login_logo_height']['text']) ? $_SESSION['theme']['login_logo_height']['text'] : 'auto; max-height: 300px';
 			$settings['login']['destination'] = !empty($_SESSION['login']['destination']['text']) ? $_SESSION['login']['destination']['text'] : '/core/dashboard/';
+
+			if (substr($settings['login']['destination'], 0, 4) != 'http'){
+				$settings['login']['destination'] = $_SERVER['REQUEST_SCHEME'].'://'.$_SERVER['HTTP_HOST'].$settings['login']['destination'];
+			}
 			
 		//set the default for $user_authorized to false
 			$user_authorized = false;
