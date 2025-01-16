@@ -51,7 +51,7 @@ class plugin_openid {
 			$secret_id = $_SESSION['openid']['secret_id']['text'];
 
 		//request the username
-			if (!$this->username) {
+			if(!isset($_GET['code'])) {
 
 				//set a default template
 				$_SESSION['domain']['template']['name'] = 'default';
