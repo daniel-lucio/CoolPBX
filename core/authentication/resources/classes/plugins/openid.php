@@ -108,7 +108,7 @@ class plugin_openid {
 				$view->assign("a_oid", $authorize_url);
 				
 				//show the views
-				$content = $view->render('username.htm');
+				$content = $view->render('openid.htm');
 				echo $content;
 				exit;
 			}
