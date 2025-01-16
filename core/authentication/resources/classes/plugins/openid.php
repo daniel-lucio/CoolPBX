@@ -43,7 +43,7 @@ class plugin_openid {
 				$this->username = $_POST['username'];
 			}
 
-			$ch = curl_init($url);
+			$ch = curl_init($_SESSION['openid'['metadata_url']['text']);
 			curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
 			$metadata = json_decode(curl_exec($ch));
 			curl_close($ch);
