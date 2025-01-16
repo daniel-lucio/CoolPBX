@@ -23,7 +23,9 @@ class plugin_openid {
 	 * @return array [authorized] => true or false
 	 */
 	function openid() {
-
+openlog('FusionPBX', LOG_NDELAY, LOG_AUTH);
+syslog(LOG_WARNING, 'openid()');
+closelog()
 		//pre-process some settings
 			$settings['theme']['favicon'] = !empty($_SESSION['theme']['favicon']['text']) ? $_SESSION['theme']['favicon']['text'] : PROJECT_PATH.'/themes/default/favicon.ico';
 			$settings['login']['destination'] = !empty($_SESSION['login']['destination']['text']) ? $_SESSION['login']['destination']['text'] : '';
@@ -56,7 +58,7 @@ class plugin_openid {
 			$secret_id = $_SESSION['openid']['secret_id']['text'];
 
 		//request the username
-			if(!isset($_GET['code'])) {
+			if(!isset($this->username)) {
 
 				//set a default template
 				$_SESSION['domain']['template']['name'] = 'default';
