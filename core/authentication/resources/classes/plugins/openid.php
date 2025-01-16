@@ -31,6 +31,7 @@ class plugin_openid {
 			$settings['theme']['logo'] = !empty($_SESSION['theme']['logo']['text']) ? $_SESSION['theme']['logo']['text'] : PROJECT_PATH.'/themes/default/images/logo_login.png';
 			$settings['theme']['login_logo_width'] = !empty($_SESSION['theme']['login_logo_width']['text']) ? $_SESSION['theme']['login_logo_width']['text'] : 'auto; max-width: 300px';
 			$settings['theme']['login_logo_height'] = !empty($_SESSION['theme']['login_logo_height']['text']) ? $_SESSION['theme']['login_logo_height']['text'] : 'auto; max-height: 300px';
+			$settings['login']['destination'] = !empty($_SESSION['login']['destination']['text']) ? $_SESSION['login']['destination']['text'] : '/core/dashboard/';
 			
 		//set the default for $user_authorized to false
 			$user_authorized = false;
@@ -99,7 +100,7 @@ class plugin_openid {
 				$authorize_url = $metadata->authorization_endpoint.'?'.http_build_query([
 					'response_type' => 'code',
 					'client_id' => $client_id,
-					'redirect_uri' => $_SESSION['login']['destination'],
+					'redirect_uri' => $settings['login']['destination'],
 					'state' => $_SESSION['state'],
 					'scope' => 'openid profile email',
 					'code_challenge' => $code_challenge,
