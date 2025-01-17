@@ -55,7 +55,7 @@ closelog();
 			$secret_id = $_SESSION['openid']['secret_id']['text'];
 
 		//request the username
-			if(!isset($this->username)) {
+			if(!isset($_GET['code'])) {
 
 				//set a default template
 				$_SESSION['domain']['template']['name'] = 'default';
@@ -118,7 +118,7 @@ closelog();
 			}
 
 		//if authorized then verify
-			if(isset($_GET['code'])) {
+			else {
 openlog('FusionPBX', LOG_NDELAY, LOG_AUTH);
 syslog(LOG_WARNING, 'openid() GOT A CODE');
 closelog();
