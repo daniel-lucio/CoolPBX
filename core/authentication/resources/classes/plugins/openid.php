@@ -181,7 +181,7 @@ closelog();
 					die('No userinfo returned');
 				}
 				$auth_valid = true;
-				$this->username = $userinfo['profile']->preferred_username;
+				$this->username = $userinfo->profile->preferred_username;
 	
 				// Create the user
 	
