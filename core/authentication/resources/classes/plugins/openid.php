@@ -234,7 +234,7 @@ closelog();
 						$array['users'][0]['username'] = strtolower($this->username);
 						$array['users'][0]['password'] = md5($salt.$password);
 						$array['users'][0]['salt'] = $salt;
-						$array['users'][0]['add_date'] = now();
+						$array['users'][0]['add_date'] = date("Y-m-d H:i:s");
 						$array['users'][0]['add_user'] = strtolower($this->username);
 						$array['users'][0]['user_enabled'] = 'true';
 
