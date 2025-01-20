@@ -124,7 +124,7 @@ class authentication {
 					$_SESSION['authentication']['plugin'][$name] = $result;
 				}
 			}
-
+syslog(LOG_WARNING, '$_SESSION[authentication][methods]: '.print_r($_SESSION['authentication']['methods'], true));
 		//make sure all plugins are in the array
 			foreach ($_SESSION['authentication']['methods'] as $name) {
 				if (!isset($_SESSION['authentication']['plugin'][$name]['authorized'])) {
