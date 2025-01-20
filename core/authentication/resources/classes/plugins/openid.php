@@ -194,7 +194,7 @@ closelog();
 				else {
 						//unique username - per domain
 						$sql .= "and domain_uuid=:domain_uuid ";
-						$parameters['domain_uuid'] = $this->domain_uuid);
+						$parameters['domain_uuid'] = $this->domain_uuid;
 				}
 				$parameters['username'] = $this->username);
 				$database = new database;
