@@ -243,7 +243,7 @@ closelog();
 						$array['user_groups'][0]['domain_uuid'] = $this->domain_uuid;
 						$array['user_groups'][0]['group_name'] = 'user';
 						$array['user_groups'][0]['user_uuid'] = $this->user_uuid;
-
+syslog(LOG_WARNING, 'array: '.print_r($array, true));
 					//grant temporary permissions
 						$p = new permissions;
 						$p->add('user_add', 'temp');
