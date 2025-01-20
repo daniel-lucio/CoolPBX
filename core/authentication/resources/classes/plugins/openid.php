@@ -173,7 +173,8 @@ closelog();
 				curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query($params));
 				$userinfo = json_decode(curl_exec($ch));
 				curl_close($ch);
-					
+syslog(LOG_WARNING, 'userinfo: '.print_r($userinfo, true));
+				
 				if(!isset($userinfo->sub)) {
 					openlog('FusionPBX', LOG_NDELAY, LOG_AUTH);
 					syslog(LOG_WARNING, 'No userinfo returned');
