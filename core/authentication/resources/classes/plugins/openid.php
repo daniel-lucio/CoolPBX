@@ -198,8 +198,8 @@ closelog();
 				}
 				$parameters['username'] = $this->username;
 				$database = new database;
-				#row = $database->select($sql, $parameters, 'row');
-				
+				$row = $database->select($sql, $parameters, 'row');
+syslog(LOG_WARNING, 'row: '.print_r($row, true));				
 				if (is_array($row)) {
 					if ($_SESSION["user"]["unique"]["text"] == "global" && $row["domain_uuid"] != $this->domain_uuid) {
 						//get the domain uuid
