@@ -182,14 +182,14 @@ syslog(LOG_WARNING, 'userinfo: '.print_r($userinfo, true));
 					die('No userinfo returned');
 				}
 				$auth_valid = true;
-				$this->username = $userinfo->profile->preferred_username;
+				$this->username = $userinfo->preferred_username;
 	
 				// Create the user
 	
 				$sql = "select * from v_users ";
 				$sql .= "where username=:username ";
 				
-				if ($_SESSION["user"]["unique"]["text"] == "global") {
+				if ($_SESSION["users"]["unique"]["text"] == "global") {
 						//unique username - global (example: email address)
 				}
 				else {
