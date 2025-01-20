@@ -289,7 +289,7 @@ closelog();
 			//$_SESSION['authentication']['plugin']['totp']['contact_uuid'] = $_SESSION["contact_uuid"];
 			//$_SESSION['authentication']['plugin']['totp']['domain_uuid'] =  $_SESSION["domain_uuid"];
 			//$_SESSION['authentication']['plugin']['totp']['authorized'] = $auth_valid ? true : false;
-			}
+
 		}
 	}
 
