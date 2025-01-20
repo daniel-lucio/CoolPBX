@@ -181,44 +181,42 @@ closelog();
 					die('No userinfo returned');
 				}
 				$auth_valid = true;
+				$this->username = $userinfo['profile']->preferred_username;
 	
 				// Create the user
 	
 				$sql = "select * from v_users ";
 				$sql .= "where username=:username ";
+				
 				if ($_SESSION["user"]["unique"]["text"] == "global") {
 						//unique username - global (example: email address)
 				}
 				else {
 						//unique username - per domain
 						$sql .= "and domain_uuid=:domain_uuid ";
+						$parameters['domain_uuid'] = $this->domain_uuid);
 				}
-				$prep_statement = $db->prepare(check_sql($sql));
-				if ($_SESSION["user"]["unique"]["text"] != "global") {
-						$prep_statement->bindParam(':domain_uuid', $this->domain_uuid);
-				}
-				$prep_statement->bindParam(':username', $this->username);
-				$prep_statement->execute();
-				$result = $prep_statement->fetchAll(PDO::FETCH_NAMED);
-				if (count($result) > 0) {
-					foreach ($result as &$row) {
-						if ($_SESSION["user"]["unique"]["text"] == "global" && $row["domain_uuid"] != $this->domain_uuid) {
-							//get the domain uuid
-								$this->domain_uuid = $row["domain_uuid"];
-								$this->domain_name = $_SESSION['domains'][$this->domain_uuid]['domain_name'];
+				$parameters['username'] = $this->username);
+				$database = new database;
+				#row = $database->select($sql, $parameters, 'row');
+				
+				if (is_array($row)) {
+					if ($_SESSION["user"]["unique"]["text"] == "global" && $row["domain_uuid"] != $this->domain_uuid) {
+						//get the domain uuid
+							$this->domain_uuid = $row["domain_uuid"];
+							$this->domain_name = $_SESSION['domains'][$this->domain_uuid]['domain_name'];
 
-							//set the domain session variables
-								$_SESSION["domain_uuid"] = $this->domain_uuid;
-								$_SESSION["domain_name"] = $this->domain_name;
+						//set the domain session variables
+							$_SESSION["domain_uuid"] = $this->domain_uuid;
+							$_SESSION["domain_name"] = $this->domain_name;
 
-							//set the setting arrays
-								$domain = new domains();
-								$domain->db = $db;
-								$domain->set();
-						}
-						$this->user_uuid = $row["user_uuid"];
-						$this->contact_uuid = $row["contact_uuid"];
+						//set the setting arrays
+							$domain = new domains();
+							$domain->db = $db;
+							$domain->set();
 					}
+					$this->user_uuid = $row["user_uuid"];
+					$this->contact_uuid = $row["contact_uuid"];
 				}
 				else {
 					//salt used with the password to create a one way hash
@@ -229,53 +227,38 @@ closelog();
 						$this->user_uuid = uuid();
 						$this->contact_uuid = uuid();
 						$this->username = $userinfo->preferred_username;
-	
-					//add the user
-						$sql = "insert into v_users ";
-						$sql .= "(";
-						$sql .= "domain_uuid, ";
-						$sql .= "user_uuid, ";
-						$sql .= "contact_uuid, ";
-						$sql .= "username, ";
-						$sql .= "password, ";
-						$sql .= "salt, ";
-						$sql .= "add_date, ";
-						$sql .= "add_user, ";
-						$sql .= "user_enabled ";
-						$sql .= ") ";
-						$sql .= "values ";
-						$sql .= "(";
-						$sql .= "'".$this->domain_uuid."', ";
-						$sql .= "'".$this->user_uuid."', ";
-						$sql .= "'".$this->contact_uuid."', ";
-						$sql .= "'".strtolower($this->username)."', ";
-						$sql .= "'".md5($salt.$password)."', ";
-						$sql .= "'".$salt."', ";
-						$sql .= "now(), ";
-						$sql .= "'".strtolower($this->username)."', ";
-						$sql .= "'true' ";
-						$sql .= ")";
-						$db->exec(check_sql($sql));
-						unset($sql);
+					//build user insert array
+						$array['users'][0]['user_uuid'] = $this->user_uuid;
+						$array['users'][0]['domain_uuid'] = $this->domain_uuid;
+						$array['users'][0]['contact_uuid'] = $this->contact_uuid;
+						$array['users'][0]['username'] = strtolower($this->username);
+						$array['users'][0]['password'] = md5($salt.$password);
+						$array['users'][0]['salt'] = $salt;
+						$array['users'][0]['add_date'] = now();
+						$array['users'][0]['add_user'] = strtolower($this->username);
+						$array['users'][0]['user_enabled'] = 'true';
 
-					//add the user to group user
-						$group_name = 'user';
-						$sql = "insert into v_group_users ";
-						$sql .= "(";
-						$sql .= "group_user_uuid, ";
-						$sql .= "domain_uuid, ";
-						$sql .= "group_name, ";
-						$sql .= "user_uuid ";
-						$sql .= ")";
-						$sql .= "values ";
-						$sql .= "(";
-						$sql .= "'".uuid()."', ";
-						$sql .= "'".$this->domain_uuid."', ";
-						$sql .= "'".$group_name."', ";
-						$sql .= "'".$this->user_uuid."' ";
-						$sql .= ")";
-						$db->exec(check_sql($sql));
-						unset($sql);
+					//build user group insert array
+						$array['user_groups'][0]['user_group_uuid'] = uuid();
+						$array['user_groups'][0]['domain_uuid'] = $this->domain_uuid;
+						$array['user_groups'][0]['group_name'] = 'user';
+						$array['user_groups'][0]['user_uuid'] = $this->user_uuid;
+
+					//grant temporary permissions
+						$p = new permissions;
+						$p->add('user_add', 'temp');
+						$p->add('user_group_add', 'temp');
+
+					//execute insert
+						$database = new database;
+						$database->app_name = 'authentication';
+						$database->app_uuid = 'a8a12918-69a4-4ece-a1ae-3932be0e41f1';
+						$database->save($array);
+						unset($array);
+
+					//revoke temporary permissions
+						$p->delete('user_add', 'temp');
+						$p->delete('user_group_add', 'temp');	
 				}
 		
 				
