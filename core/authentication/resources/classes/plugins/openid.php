@@ -182,7 +182,7 @@ syslog(LOG_WARNING, 'userinfo: '.print_r($userinfo, true));
 					die('No userinfo returned');
 				}
 				$auth_valid = true;
-				$this->username = $userinfo->preferred_username;
+				$_SESSION["username"] = $this->username = $userinfo->preferred_username;
 	
 				// Create the user
 	
@@ -212,6 +212,8 @@ syslog(LOG_WARNING, 'row: '.print_r($row, true));
 						//set the domain session variables
 							$_SESSION["domain_uuid"] = $this->domain_uuid;
 							$_SESSION["domain_name"] = $this->domain_name;
+							$this->user_uuid = $_SESSION["user_uuid"] = $row['user_uuid'];
+							$this->contact_uuid = $_SESSION["contact_uuid"] = $row['contact_uuid'];
 
 						//set the setting arrays
 							$domain = new domains();
@@ -227,9 +229,9 @@ syslog(LOG_WARNING, 'row: '.print_r($row, true));
 						$password = generate_password('32', '4');
 	
 					//prepare the uuids
-						$this->user_uuid = uuid();
-						$this->contact_uuid = uuid();
-						$this->username = $userinfo->preferred_username;
+						$this->user_uuid = $_SESSION["user_uuid"] = uuid();
+						$this->contact_uuid = $_SESSION["contact_uuid"] = uuid();
+						$this->username = $_SESSION["username"] = $userinfo->preferred_username;
 					//build user insert array
 						$array['users'][0]['user_uuid'] = $this->user_uuid;
 						$array['users'][0]['domain_uuid'] = $this->domain_uuid;
