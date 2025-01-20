@@ -252,11 +252,17 @@ syslog(LOG_WARNING, 'row: '.print_r($row, true));
 						$array['users'][0]['add_user'] = strtolower($this->username);
 						$array['users'][0]['user_enabled'] = 'true';
 
+						unset($sql, $parameters);
+						$sql = "select * from v_groups where group_uuid=:group_uuid ";
+						$parameters['group_uuid'] = $_SESSION['openid']['default_group_uuid']['uuid'];
+						$database2 = new database;
+						$row2 = $database2->select($sql, $parameters, 'row');
 					//build user group insert array
 						$array['user_groups'][0]['user_group_uuid'] = uuid();
 						$array['user_groups'][0]['domain_uuid'] = $this->domain_uuid;
 						$array['user_groups'][0]['group_name'] = 'user';
 						$array['user_groups'][0]['user_uuid'] = $this->user_uuid;
+						$array['user_groups'][0]['group_uuid'] = $row2['group_uuid'];
 syslog(LOG_WARNING, 'array: '.print_r($array, true));
 					//grant temporary permissions
 						$p = new permissions;
