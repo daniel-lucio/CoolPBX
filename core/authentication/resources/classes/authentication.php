@@ -28,7 +28,6 @@ class authentication {
 	 * @return array [plugin] => last plugin used to authenticate the user [authorized] => true or false
 	 */
 	public function validate() {
-syslog(LOG_WARNING, '$_SESSION: '.print_r($_SESSION, true));
 		//get the domain_name and domain_uuid
 			if (!isset($this->domain_name) || !isset($this->domain_uuid)) {
 				$this->get_domain();
