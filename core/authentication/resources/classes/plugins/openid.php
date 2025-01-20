@@ -159,6 +159,7 @@ closelog();
 					syslog(LOG_WARNING, 'Error fetching access token');
 					syslog(LOG_WARNING, "metadata->token_endpoint: ".$metadata->token_endpoint);
 					syslog(LOG_WARNING, "params: ".print_r($params, true));
+					syslog(LOG_WARNING, "response: ".print_r($response, true));
 					closelog();
 					die('Error fetching access token'.PHP_EOL."metadata->token_endpoint: ".$metadata->token_endpoint.PHP_EOL."params: ".print_r($params, true));
 				}
