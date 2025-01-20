@@ -242,7 +242,7 @@
 			//set default false
 				$result = false;
 			//search for the permission
-				if (count($_SESSION["groups"]) > 0) {
+				if ((is_array($_SESSION["groups"])) && (count($_SESSION["groups"]) > 0)) {
 					foreach($_SESSION["groups"] as $row) {
 						if ($row['group_name'] == $group) {
 							$result = true;
