@@ -136,7 +136,7 @@ closelog();
 					closelog();
 					die('Authorization server returned an error: '.htmlspecialchars($_GET['error']));
 				}
-	
+				unset($params);
 				$params = [
 					'grant_type' => 'authorization_code',
 					'code' => $_GET['code'],
@@ -157,8 +157,10 @@ closelog();
 				if(!isset($response->access_token)) {
 					openlog('FusionPBX', LOG_NDELAY, LOG_AUTH);
 					syslog(LOG_WARNING, 'Error fetching access token');
+					syslog(LOG_WARNING, "metadata->token_endpoint: ".$metadata->token_endpoint);
+					syslog(LOG_WARNING, "params: ".print_r($params, true));
 					closelog();
-					die('Error fetching access token');
+					die('Error fetching access token'.PHP_EOL."metadata->token_endpoint: ".$metadata->token_endpoint.PHP_EOL."params: ".print_r($params, true));
 				}
 	
 				$params = [
