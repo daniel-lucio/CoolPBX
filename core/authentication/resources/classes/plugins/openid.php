@@ -197,9 +197,11 @@ closelog();
 						$parameters['domain_uuid'] = $this->domain_uuid;
 				}
 				$parameters['username'] = $this->username;
+syslog(LOG_WARNING, 'sql: '.$sql);
+syslog(LOG_WARNING, 'parameters: '.print_r($parameters, true));
 				$database = new database;
 				$row = $database->select($sql, $parameters, 'row');
-syslog(LOG_WARNING, 'row: '.print_r($row, true));				
+syslog(LOG_WARNING, 'row: '.print_r($row, true));
 				if (is_array($row)) {
 					if ($_SESSION["user"]["unique"]["text"] == "global" && $row["domain_uuid"] != $this->domain_uuid) {
 						//get the domain uuid
@@ -263,6 +265,7 @@ syslog(LOG_WARNING, 'array: '.print_r($array, true));
 		
 				
 				//build the result array
+				unset($result);
 				$result["plugin"] = "openid";
 				$result["domain_name"] = $_SESSION["domain_name"];
 				$result["username"] = $_SESSION["username"];
@@ -271,7 +274,7 @@ syslog(LOG_WARNING, 'array: '.print_r($array, true));
 				$result["contact_uuid"] = $_SESSION["contact_uuid"];
 				$result["authorized"] = $auth_valid ? true : false;
 openlog('FusionPBX', LOG_NDELAY, LOG_AUTH);
-syslog(LOG_WARNING, 'openid()'.print_r($result, true));
+syslog(LOG_WARNING, 'result[] '.print_r($result, true));
 closelog();
 
 			//add the failed login to user logs
