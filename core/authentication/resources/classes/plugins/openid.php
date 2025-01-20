@@ -182,7 +182,8 @@ syslog(LOG_WARNING, 'userinfo: '.print_r($userinfo, true));
 					die('No userinfo returned');
 				}
 				$auth_valid = true;
-				$_SESSION["username"] = $this->username = $userinfo->preferred_username;
+				$_SESSION["username"] = $userinfo->preferred_username;
+				$this->username = $userinfo->preferred_username;
 	
 				// Create the user
 	
@@ -236,6 +237,10 @@ syslog(LOG_WARNING, 'row: '.print_r($row, true));
 						$this->contact_uuid = $_SESSION["contact_uuid"] = uuid();
 						$this->username = $userinfo->preferred_username;
 						$_SESSION["username"] = $userinfo->preferred_username;
+						if (isset($_SESSION['openid']['default_domain_uuid']['uuid'])){
+							$this->domain_uuid = $_SESSION['openid']['default_domain_uuid']['uuid'];
+							$this->domain_name = $_SESSION['domains'][$this->domain_uuid]['domain_name'];
+						}
 					//build user insert array
 						$array['users'][0]['user_uuid'] = $this->user_uuid;
 						$array['users'][0]['domain_uuid'] = $this->domain_uuid;
